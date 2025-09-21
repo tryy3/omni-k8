@@ -22278,8 +22278,8 @@ cluster:
               generators:
               - list:
                   elements:
-                  - repoPath: examples/omni/apps/*/*
-                    repoURL: https://github.com/siderolabs/contrib.git
+                  - repoPath: apps/*/*
+                    repoURL: https://github.com/tryy3/omni-k8.git
                     revision: HEAD
               - git:
                   directories:
