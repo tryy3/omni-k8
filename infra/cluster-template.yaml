@@ -1,19 +1,21 @@
 kind: Cluster
-name: omni-contrib
+name: talos-default
 talos:
-  version: v1.6.1
+  version: v1.11.1
 kubernetes:
-  version: 1.28.6
+  version: 1.34.1
 features:
   enableWorkloadProxy: true
 patches:
   - name: cni
     file: patches/cni.yaml
+  - name: tailscale
+    file: patches/tailscale.yaml
 ---
 kind: ControlPlane
 machineClass:
-  name: omni-contrib-controlplanes
-  size: 3
+  name: omni-controlplanes
+  size: 2
 patches:
   - name: cilium
     file: patches/cilium.yaml
@@ -25,5 +27,5 @@ patches:
 kind: Workers
 name: workers
 machineClass:
-  name: omni-contrib-workers
+  name: omni-workers
   size: unlimited
