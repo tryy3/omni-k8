@@ -1,3 +1,4 @@
 contrib/
 /talosconfig
 /*.yaml
+tailscale.yaml

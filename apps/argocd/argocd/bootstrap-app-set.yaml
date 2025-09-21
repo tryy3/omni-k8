@@ -8,9 +8,9 @@ spec:
         generators:
           - list:
               elements:
-                - repoURL: https://github.com/siderolabs/contrib.git
+                - repoURL: https://github.com/tryy3/omni-k8.git
                   revision: HEAD
-                  repoPath: examples/omni/apps/*/*
+                  repoPath: apps/*/*
           - git:
               repoURL: '{{ repoURL }}'
               revision: '{{ revision }}'
