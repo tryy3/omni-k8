@@ -2,3 +2,4 @@ contrib/
 /talosconfig
 /*.yaml
 tailscale.yaml
+secret.yaml
