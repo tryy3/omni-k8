@@ -17,10 +17,10 @@ applications:
     tool:
       helm:
         valueFiles:
-          - $values/tailscale-operator/values.yaml
+          - $values/tailscale-apps/tailscale-operator/values.yaml
   - name: extra
     type: manifest
     namespace: tailscale
     repoURL: https://github.com/tryy3/homelab-k8s.git
-    path: apps/tailscale-extra
+    path: tailscale-apps/tailscale-extra
     targetRevision: HEAD
