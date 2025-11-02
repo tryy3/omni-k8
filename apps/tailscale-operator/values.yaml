@@ -1,0 +1,12 @@
+# https://github.com/tailscale/tailscale/blob/23a0398136d9d894eaf332c8ed8743dc9ecf4611/cmd/k8s-operator/deploy/chart/values.yaml
+
+# oauth:
+#   clientId: ""
+#   clientSecret: ""
+
+apiServerProxyConfig:
+  # allowImpersonation: "true"
+  mode: "true"
+
+operatorConfig:
+  logging: "dev"

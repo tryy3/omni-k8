@@ -46,4 +46,41 @@ Applications can be made of Helm charts, Kustomize definitions, or just Kubernet
 2. Configure ArgoCD to use that repository [bootstrap-app-set.yaml](apps/argocd/argocd/bootstrap-app-set.yaml)
 3. Regenerate the ArgoCD bootstrap cluster manifest patch [argocd.yaml](infra/patches/argocd.yaml) (instructions can be found at the top of that file).
 4. Commit and push these changes to a hosted git repository the Omni instance has access to.
-5. Create a cluster with Omni as described above. 
+5. Create a cluster with Omni as described above.
+
+## Installation
+### Kubectl
+Install through package manager (`yay -S kubectl`)
+
+### Omnictl / Talosctl
+Download binary through dashboard and move to path (i.e. `/usr/bin/local/omnictl`)
+
+#### Configure
+https://docs.siderolabs.com/omni/getting-started/install-and-configure-omnictl
+Download config from dashboard - move omniconfig.yaml to ~/.config/omni/config
+`mv omniconfig.yaml ~/.config/omni/config`
+
+The omniconfig.yaml should be renamed to config, so config is the yaml file and not a folder.
+
+### kubectl
+https://docs.siderolabs.com/omni/getting-started/use-kubectl-with-omni
+
+Omni uses oidc to login, so you first need to install oidc-login plugin https://github.com/int128/kubelogin#getting-started
+Easiest can be to download the plugin from github releases, extract the binary into path and rename to `kubectl-oidc_login`
+
+After installation you can try the command `kubectl oidc-login` to make sure it's properly installed
+
+#### configuration
+Download from dashboard. To test if everything is working you can run `kubectl --kubeconfig ./talos-default-kubeconfig.yaml get nodes`
+
+Move the config to a more centralised path for example `~/.config/kube` and add the file to your KUBECONFIG env
+`export KUBECONFIG=$KUBECONFIG:/home/tryy3/.config/kube/talos-kubeconfig`
+https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/
+
+### Argocd
+https://argo-cd.readthedocs.io/en/stable/getting_started/
+Download from github releases and move to path `/usr/local/bin/argocd/`
+
+To quickly access argocd locally you can port-forward the svc port.
+`kubectl port-forward -n argocd svc/argocd-server 8080:443`
+Then access via `http://localhost:8080`
