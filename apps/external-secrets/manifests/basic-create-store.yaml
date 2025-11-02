@@ -1,5 +1,5 @@
 apiVersion: external-secrets.io/v1
-kind: SecretStore
+kind: ClusterSecretStore
 metadata:
   name: vault-backend
 spec:
@@ -16,3 +16,4 @@ spec:
         tokenSecretRef:
           name: "vault-token"
           key: "token"
+          namespace: "external-secrets"
