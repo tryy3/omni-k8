@@ -21,6 +21,6 @@ applications:
   - name: extra
     type: manifest
     namespace: tailscale
-    repoURL: https://github.com/tryy3/homelab-k8s.git
+    repoURL: https://github.com/tryy3/omni-k8.git
     path: tailscale-apps/tailscale-extra
     targetRevision: HEAD
