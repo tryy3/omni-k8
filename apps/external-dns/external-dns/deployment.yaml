@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: external-dns
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: external-dns
+  template:
+    metadata:
+      labels:
+        app: external-dns
+    spec:
+      containers:
+        - name: external-dns
+          image: registry.k8s.io/external-dns/external-dns:v0.19.0
+          args:
+            - --source=service
+            - --domain-filter=example.com # (optional) limit to only example.com domains; change to match the zone you create in DNSimple.
+            - --provider=dnsimple
+            - --registry=txt
+          env:
+            - name: DNSIMPLE_OAUTH
+              remoteRef:
+                key: external-dns
+                property: oauth
+            - name: DNSIMPLE_ACCOUNT_ID
+              remoteRef:
+                key: external-dns
+                property: account_id
+            - name: DNSIMPLE_ZONES
+              value: "tryy3.dev"
