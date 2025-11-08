@@ -25,12 +25,12 @@ spec:
             - name: DNSIMPLE_OAUTH
               valueFrom:
                 secretKeyRef:
-                  name: external-dns
+                  name: dnsimple-oauth
                   key: oauth
             - name: DNSIMPLE_ACCOUNT_ID
               valueFrom:
                 secretKeyRef:
-                  name: external-dns
+                  name: dnsimple-oauth
                   key: account_id
             - name: DNSIMPLE_ZONES
               value: "tryy3.dev"
