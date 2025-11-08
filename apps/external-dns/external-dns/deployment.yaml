@@ -21,6 +21,7 @@ spec:
             - --domain-filter=tryy3.dev # (optional) limit to only example.com domains; change to match the zone you create in DNSimple.
             - --provider=dnsimple
             - --registry=txt
+            - --log-level=debug
           env:
             - name: DNSIMPLE_OAUTH
               valueFrom:
