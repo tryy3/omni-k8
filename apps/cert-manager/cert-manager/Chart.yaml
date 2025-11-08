@@ -1,7 +1,7 @@
 apiVersion: v2
-name: cert-manager
+name: cert-manager-webhook-dnsimple
 version: v0.1.9
 dependencies:
-  - name: cert-manager
+  - name: cert-manager-webhook-dnsimple
     version: v0.1.9
     repository: https://puzzle.github.io/cert-manager-webhook-dnsimple
