@@ -1,7 +1,7 @@
 apiVersion: v2
-name: external-secrets
+name: cert-manager
 version: v0.1.9
 dependencies:
-  - name: external-secrets
+  - name: cert-manager
     version: v0.1.9
     repository: https://puzzle.github.io/cert-manager-webhook-dnsimple
