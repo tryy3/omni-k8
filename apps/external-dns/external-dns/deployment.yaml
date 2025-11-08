@@ -23,12 +23,14 @@ spec:
             - --registry=txt
           env:
             - name: DNSIMPLE_OAUTH
-              remoteRef:
-                key: external-dns
-                property: oauth
+              valueFrom:
+                secretKeyRef:
+                  name: external-dns
+                  key: oauth
             - name: DNSIMPLE_ACCOUNT_ID
-              remoteRef:
-                key: external-dns
-                property: account_id
+              valueFrom:
+                secretKeyRef:
+                  name: external-dns
+                  key: account_id
             - name: DNSIMPLE_ZONES
               value: "tryy3.dev"
