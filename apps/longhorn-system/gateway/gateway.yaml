@@ -6,7 +6,7 @@ metadata:
   labels:
     external-dns: enabled
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    cert-manager.io/cluster-issuer: cert-manager-webhook-dnsimple-production
 spec:
   gatewayClassName: tailscale
   listeners:
