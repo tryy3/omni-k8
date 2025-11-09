@@ -22,4 +22,4 @@ spec:
     group: gateway.envoyproxy.io
     kind: EnvoyProxy
     name: tailscale-proxy
-    namespace: tailscale
+    namespace: envoy
