@@ -3,6 +3,10 @@ longhorn:
     defaultReplicaCount: "2"
     defaultDataPath: /var/lib/longhorn
 
+  # Disable pre-upgrade checker to avoid hook issues on fresh installs
+  preUpgradeChecker:
+    jobEnabled: false
+
   persistence:
     defaultClass: true
     defaultClassReplicaCount: 2
