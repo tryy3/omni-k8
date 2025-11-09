@@ -9,9 +9,4 @@ longhorn:
     reclaimPolicy: Delete
 
   ingress:
-    enabled: true
-    ingressClassName: cilium
-    host: longhorn.local
-    annotations:
-      omni-kube-service-exposer.sidero.dev/port: "50083"
-      omni-kube-service-exposer.sidero.dev/label: "Longhorn UI"
+    enabled: false
