@@ -33,7 +33,7 @@ spec:
     - group: gateway.networking.k8s.io
       kind: Gateway
       name: custom-domain-gateway
-      namespace: tailscale
+      namespace: envoy
   hostnames:
     - "test.tryy3.dev"
   rules:
