@@ -1,46 +1,47 @@
-# groupName sets the API group name for the API service that registers this webhook service.
-# It will be used when specifying an issuer for a (Cluster)Issuer object.
-# When customizing, provide an FQDN, for example acme.my-company.com.
-groupName: "acme.dnsimple.com"
+cert-manager-webhook-dnsimple:
+  # groupName sets the API group name for the API service that registers this webhook service.
+  # It will be used when specifying an issuer for a (Cluster)Issuer object.
+  # When customizing, provide an FQDN, for example acme.my-company.com.
+  groupName: "acme.dnsimple.com"
 
-certManager:
-  namespace: cert-manager
-  serviceAccountName: cert-manager
-# logLevel: 3
-dnsimple:
-  # token: ""
-  accountID: 159380
-  existingTokenSecret: true
-  tokenSecretName: cert-dnsimple-secret
-clusterIssuer:
-  email: dennistryy3@gmail.com
-  staging:
-    enabled: true
-  production:
-    enabled: true
-image:
-  repository: ghcr.io/puzzle/cert-manager-webhook-dnsimple
-  tag: v0.1.9
-  pullPolicy: IfNotPresent
-  # pullSecret: "gcr"
-nameOverride: "dnsimple"
-fullnameOverride: ""
-service:
-  type: ClusterIP
-  port: 443
-useUnprivilegedPort: true
-resources: {}
-# We usually recommend not to specify default resources and to leave this as a conscious
-# choice for the user. This also increases chances charts run on environments with little
-# resources, such as Minikube. If you do want to specify resources, uncomment the following
-# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-# limits:
-#  cpu: 100m
-#  memory: 128Mi
-# requests:
-#  cpu: 100m
-#  memory: 128Mi
+  certManager:
+    namespace: cert-manager
+    serviceAccountName: cert-manager
+  # logLevel: 3
+  dnsimple:
+    # token: ""
+    accountID: 159380
+    existingTokenSecret: true
+    tokenSecretName: cert-dnsimple-secret
+  clusterIssuer:
+    email: dennistryy3@gmail.com
+    staging:
+      enabled: true
+    production:
+      enabled: true
+  image:
+    repository: ghcr.io/puzzle/cert-manager-webhook-dnsimple
+    tag: v0.1.9
+    pullPolicy: IfNotPresent
+    # pullSecret: "gcr"
+  nameOverride: "dnsimple"
+  fullnameOverride: ""
+  service:
+    type: ClusterIP
+    port: 443
+  useUnprivilegedPort: true
+  resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
 
-nodeSelector: {}
-tolerations: []
-affinity: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
