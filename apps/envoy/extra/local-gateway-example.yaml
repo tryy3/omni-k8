@@ -70,11 +70,11 @@ spec:
         - path:
             type: PathPrefix
             value: /
-      filters:
-        - type: RequestRedirect
-          requestRedirect:
-            scheme: https
-            statusCode: 301
+      # filters: # Doesn't work with backendRefs
+      #   - type: RequestRedirect
+      #     requestRedirect:
+      #       scheme: https
+      #       statusCode: 301
       backendRefs:
         - name: argocd-server
           port: 80
