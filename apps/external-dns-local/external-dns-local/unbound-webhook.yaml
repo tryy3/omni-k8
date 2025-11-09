@@ -1,0 +1,146 @@
+---
+# ConfigMap for Unbound webhook configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: unbound-webhook-config
+  namespace: external-dns
+data:
+  config.yaml: |
+    # Unbound server configuration
+    unboundHost: "192.168.1.3"  # CHANGE THIS to your Unbound server IP/hostname
+    unboundPort: 8953                         # Unbound remote control port (default: 8953)
+
+    # Domain configuration
+    domains:
+      - tryy3.local
+
+    # Record TTL (in seconds)
+    defaultTTL: 300
+
+    # Dry run mode (set to false for actual DNS updates)
+    dryRun: false
+
+    # Logging
+    logLevel: info
+
+---
+# # Secret for Unbound remote control authentication
+# # You'll need to get these from your Unbound server
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   name: unbound-webhook-certs
+#   namespace: external-dns
+# type: Opaque
+# data:
+#   # These need to be base64 encoded
+#   # Get them from your Unbound server:
+#   # - /etc/unbound/unbound_control.key
+#   # - /etc/unbound/unbound_control.pem
+#   # - /etc/unbound/unbound_server.pem
+#   #
+#   # To generate base64:
+#   # cat /etc/unbound/unbound_control.key | base64 -w 0
+#   #
+#   # IMPORTANT: Replace these placeholder values!
+#   unbound_control.key: "" # Base64 encoded key
+#   unbound_control.pem: "" # Base64 encoded certificate
+#   unbound_server.pem: "" # Base64 encoded server certificate
+
+# ---
+# Deployment for Unbound webhook
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unbound-webhook
+  namespace: external-dns
+  labels:
+    app: unbound-webhook
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unbound-webhook
+  template:
+    metadata:
+      labels:
+        app: unbound-webhook
+    spec:
+      serviceAccountName: external-dns
+      containers:
+        - name: webhook
+          image: ghcr.io/guillomep/external-dns-unbound-webhook:v0.2.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8888
+              name: http
+              protocol: TCP
+          env:
+            # TODO: Change this so it uses the config by default
+            - name: UNBOUND_HOST
+              value: "192.168.1.3" # CHANGE THIS
+            - name: UNBOUND_PORT
+              value: "8953"
+            - name: LOG_LEVEL
+              value: "info"
+          volumeMounts:
+            - name: config
+              mountPath: /etc/external-dns-unbound-webhook
+              readOnly: true
+            # - name: certs
+            #   mountPath: /etc/unbound-certs
+            #   readOnly: true
+          resources:
+            requests:
+              memory: 32Mi
+              cpu: 25m
+            limits:
+              memory: 64Mi
+              cpu: 50m
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: config
+          configMap:
+            name: unbound-webhook-config
+        - name: certs
+          secret:
+            secretName: unbound-webhook-certs
+            optional: true # Make optional for initial setup
+
+---
+# Service for Unbound webhook
+apiVersion: v1
+kind: Service
+metadata:
+  name: unbound-webhook
+  namespace: external-dns
+  labels:
+    app: unbound-webhook
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8888
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: unbound-webhook

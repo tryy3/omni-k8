@@ -1,0 +1,20 @@
+# MetalLB configuration for local network LoadBalancer IPs
+# This runs alongside Tailscale operator to provide local network access
+
+metallb:
+  # Enable speaker for Layer 2 mode
+  speaker:
+    enabled: true
+    frr:
+      enabled: false  # We're using Layer 2, not BGP
+
+  controller:
+    enabled: true
+
+  # Prometheus monitoring
+  prometheus:
+    serviceAccount: prometheus-k8s
+    namespace: monitoring
+
+    # Enable ServiceMonitors if you have Prometheus operator
+    scrapeAnnotations: true

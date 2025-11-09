@@ -1,0 +1,44 @@
+# MetalLB IP Address Pool Configuration
+#
+# IMPORTANT: Update the IP addresses below to match your local network!
+#
+# Instructions:
+# 1. Choose a range of IPs from your local network that are:
+#    - NOT used by your DHCP server
+#    - NOT currently assigned to any devices
+#    - Within your network's subnet
+#
+# Example: If your network is 192.168.1.0/24 and your DHCP range is
+# 192.168.1.100-192.168.1.254, you could use 192.168.1.240-192.168.1.250
+# for MetalLB (reserve these in your UniFi DHCP settings)
+
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: local-network-pool
+  namespace: metallb-system
+spec:
+  # Define your IP range here - MUST BE CHANGED to match your network!
+  addresses:
+    - 192.168.1.240-192.168.1.250  # Example: 11 IPs for LoadBalancers
+
+  # Optional: Avoid auto-assignment to allow manual IP selection
+  autoAssign: true
+
+---
+# L2Advertisement makes MetalLB announce IPs via Layer 2 (ARP)
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: local-network-l2
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+    - local-network-pool
+
+  # Optional: Specify which nodes should announce IPs
+  # Leave empty to use all nodes
+  # nodeSelectors:
+  #   - matchLabels:
+  #       kubernetes.io/hostname: node1

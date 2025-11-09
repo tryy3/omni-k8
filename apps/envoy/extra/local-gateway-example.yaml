@@ -1,0 +1,407 @@
+---
+# Local Gateway Example using tryy3.local domain
+# This gateway uses MetalLB for local network access and external-dns-unbound-webhook
+# for automatic DNS record creation in your Unbound server.
+#
+# Key differences from Tailscale gateway:
+# - Domain: tryy3.local (instead of tryy3.dev)
+# - GatewayClass: local (uses MetalLB LoadBalancer)
+# - Label: external-dns-local==enabled (for local DNS automation)
+# - Certificate: Multiple options shown below
+
+---
+# Example 1: ArgoCD on Local Network
+# Access via: https://argocd.tryy3.local
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: argocd-local-gateway
+  namespace: envoy
+  labels:
+    # This label tells external-dns-local to manage DNS for this gateway
+    external-dns-local: enabled
+  annotations:
+    # Optional: Request specific MetalLB IP
+    # metallb.universe.tf/loadBalancerIPs: "192.168.1.240"
+
+    # Certificate issuer - see certificate options below
+    cert-manager.io/cluster-issuer: selfsigned-issuer
+spec:
+  gatewayClassName: local # Uses MetalLB LoadBalancer
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: "argocd.tryy3.local"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: argocd-local-tls
+    - name: http
+      protocol: HTTP
+      port: 80
+      hostname: "argocd.tryy3.local"
+      allowedRoutes:
+        namespaces:
+          from: All
+
+---
+# HTTPRoute for ArgoCD
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: argocd-local-route
+  namespace: argocd
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: argocd-local-gateway
+      namespace: envoy
+  hostnames:
+    - "argocd.tryy3.local"
+  rules:
+    # Optional: HTTP to HTTPS redirect
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+            statusCode: 301
+      backendRefs:
+        - name: argocd-server
+          port: 80
+
+---
+# Certificate Option 1: Self-Signed Certificate (Easiest)
+# Pros: Simple, no external dependencies
+# Cons: Browser warnings, need to trust CA manually
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: argocd-local-cert
+  namespace: envoy
+spec:
+  secretName: argocd-local-tls
+  duration: 87600h # 10 years
+  renewBefore: 720h # 30 days
+  isCA: false
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  commonName: argocd.tryy3.local
+  dnsNames:
+    - argocd.tryy3.local
+    - "*.tryy3.local" # Wildcard for all local services
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+# ---
+# # Example 2: Grafana with Wildcard Certificate
+# # Access via: https://grafana.tryy3.local
+# apiVersion: gateway.networking.k8s.io/v1
+# kind: Gateway
+# metadata:
+#   name: grafana-local-gateway
+#   namespace: envoy
+#   labels:
+#     external-dns-local: enabled
+# spec:
+#   gatewayClassName: local
+#   listeners:
+#     - name: https
+#       protocol: HTTPS
+#       port: 443
+#       hostname: "grafana.tryy3.local"
+#       allowedRoutes:
+#         namespaces:
+#           from: All
+#       tls:
+#         mode: Terminate
+#         certificateRefs:
+#           - kind: Secret
+#             name: wildcard-local-tls  # Shared wildcard cert
+
+# ---
+# apiVersion: gateway.networking.k8s.io/v1
+# kind: HTTPRoute
+# metadata:
+#   name: grafana-local-route
+#   namespace: monitoring
+# spec:
+#   parentRefs:
+#     - group: gateway.networking.k8s.io
+#       kind: Gateway
+#       name: grafana-local-gateway
+#       namespace: envoy
+#   hostnames:
+#     - "grafana.tryy3.local"
+#   rules:
+#     - backendRefs:
+#         - name: grafana
+#           port: 80
+
+# ---
+# # Example 3: Longhorn UI
+# # Access via: https://longhorn.tryy3.local
+# apiVersion: gateway.networking.k8s.io/v1
+# kind: Gateway
+# metadata:
+#   name: longhorn-local-gateway
+#   namespace: envoy
+#   labels:
+#     external-dns-local: enabled
+# spec:
+#   gatewayClassName: local
+#   listeners:
+#     - name: https
+#       protocol: HTTPS
+#       port: 443
+#       hostname: "longhorn.tryy3.local"
+#       allowedRoutes:
+#         namespaces:
+#           from: All
+#       tls:
+#         mode: Terminate
+#         certificateRefs:
+#           - kind: Secret
+#             name: wildcard-local-tls
+
+# ---
+# apiVersion: gateway.networking.k8s.io/v1
+# kind: HTTPRoute
+# metadata:
+#   name: longhorn-local-route
+#   namespace: longhorn-system
+# spec:
+#   parentRefs:
+#     - group: gateway.networking.k8s.io
+#       kind: Gateway
+#       name: longhorn-local-gateway
+#       namespace: envoy
+#   hostnames:
+#     - "longhorn.tryy3.local"
+#   rules:
+#     - backendRefs:
+#         - name: longhorn-frontend
+#           port: 80
+
+# ---
+# # Shared Wildcard Certificate for *.tryy3.local
+# # All local services can use this single certificate
+# apiVersion: cert-manager.io/v1
+# kind: Certificate
+# metadata:
+#   name: wildcard-local-cert
+#   namespace: envoy
+# spec:
+#   secretName: wildcard-local-tls
+#   duration: 87600h # 10 years
+#   renewBefore: 720h # 30 days
+#   isCA: false
+#   privateKey:
+#     algorithm: RSA
+#     size: 2048
+#   dnsNames:
+#     - "*.tryy3.local"
+#     - "tryy3.local"
+#   issuerRef:
+#     name: selfsigned-issuer
+#     kind: ClusterIssuer
+
+# ---
+# # ============================================================================
+# # Certificate Option 2: Private CA (Better than self-signed)
+# # Uncomment the sections below if you want to use a private CA
+# # ============================================================================
+
+# # # Step 1: Create a CA certificate
+# # apiVersion: cert-manager.io/v1
+# # kind: Certificate
+# # metadata:
+# #   name: local-ca
+# #   namespace: cert-manager
+# # spec:
+# #   isCA: true
+# #   commonName: "tryy3.local CA"
+# #   secretName: local-ca-secret
+# #   duration: 87600h # 10 years
+# #   privateKey:
+# #     algorithm: ECDSA
+# #     size: 256
+# #   issuerRef:
+# #     name: selfsigned-issuer
+# #     kind: ClusterIssuer
+# #
+# # ---
+# # # Step 2: Create an issuer using the CA
+# # apiVersion: cert-manager.io/v1
+# # kind: ClusterIssuer
+# # metadata:
+# #   name: local-ca-issuer
+# # spec:
+# #   ca:
+# #     secretName: local-ca-secret
+# #
+# # ---
+# # # Step 3: Issue certificates from the CA
+# # apiVersion: cert-manager.io/v1
+# # kind: Certificate
+# # metadata:
+# #   name: wildcard-local-ca-cert
+# #   namespace: envoy
+# # spec:
+# #   secretName: wildcard-local-tls
+# #   duration: 8760h # 1 year
+# #   renewBefore: 720h # 30 days
+# #   dnsNames:
+# #     - "*.tryy3.local"
+# #     - "tryy3.local"
+# #   issuerRef:
+# #     name: local-ca-issuer
+# #     kind: ClusterIssuer
+
+# ---
+# # ============================================================================
+# # Certificate Option 3: Let's Encrypt with Public DNS (Hybrid Approach)
+# # This requires adding public DNS records for *.local.tryy3.dev
+# # but services remain accessible only on local network
+# # ============================================================================
+
+# # # Use your existing letsencrypt-prod issuer
+# # apiVersion: cert-manager.io/v1
+# # kind: Certificate
+# # metadata:
+# #   name: local-public-cert
+# #   namespace: envoy
+# # spec:
+# #   secretName: local-public-tls
+# #   duration: 2160h # 90d
+# #   renewBefore: 720h # 30d
+# #   dnsNames:
+# #     - "*.local.tryy3.dev"  # Use subdomain of public domain
+# #     - "local.tryy3.dev"
+# #   issuerRef:
+# #     name: letsencrypt-prod
+# #     kind: ClusterIssuer
+# #
+# # # Then in Gateway, use hostname: "argocd.local.tryy3.dev"
+# # # And configure external-dns-local to manage local.tryy3.dev subdomain
+
+# ---
+# # ============================================================================
+# # How It Works
+# # ============================================================================
+# #
+# # 1. You create a Gateway with gatewayClassName: local
+# # 2. MetalLB assigns an IP from your pool (e.g., 192.168.1.240)
+# # 3. external-dns-local sees the label "external-dns-local: enabled"
+# # 4. external-dns-local creates DNS records in Unbound:
+# #    - argocd.tryy3.local → 192.168.1.240
+# #    - grafana.tryy3.local → 192.168.1.241
+# #    - longhorn.tryy3.local → 192.168.1.242
+# # 5. Devices on your local network can now access:
+# #    - https://argocd.tryy3.local
+# #    - https://grafana.tryy3.local
+# #    - https://longhorn.tryy3.local
+# #
+# # No manual DNS configuration needed!
+
+# ---
+# # ============================================================================
+# # Comparison: Local vs Tailscale Gateways
+# # ============================================================================
+# #
+# # Local Gateway (this file):
+# # - Domain: *.tryy3.local
+# # - Label: external-dns-local: enabled
+# # - GatewayClass: local
+# # - LoadBalancer: MetalLB
+# # - DNS: Unbound (local network)
+# # - Access: Local network only
+# # - Certificate: Self-signed or Private CA
+# #
+# # Tailscale Gateway (gateway.yaml):
+# # - Domain: *.tryy3.dev
+# # - Label: external-dns: enabled
+# # - GatewayClass: tailscale
+# # - LoadBalancer: Tailscale
+# # - DNS: DNSimple (public)
+# # - Access: Tailscale network (remote + local)
+# # - Certificate: Let's Encrypt (public)
+# #
+# # Both can coexist! Same service, different access methods.
+
+# ---
+# # ============================================================================
+# # Template for New Services
+# # ============================================================================
+# #
+# # To expose a new service on local network:
+# #
+# # 1. Copy the Gateway section above
+# # 2. Change:
+# #    - metadata.name: myservice-local-gateway
+# #    - hostname: myservice.tryy3.local
+# # 3. Copy the HTTPRoute section
+# # 4. Change:
+# #    - metadata.name: myservice-local-route
+# #    - metadata.namespace: (your service's namespace)
+# #    - backendRefs.name: (your service name)
+# #    - backendRefs.port: (your service port)
+# # 5. Apply: kubectl apply -f myservice-local.yaml
+# # 6. Access: https://myservice.tryy3.local
+# #
+# # DNS records are created automatically!
+
+# ---
+# # ============================================================================
+# # Getting the MetalLB IP
+# # ============================================================================
+# #
+# # Find the IP assigned by MetalLB:
+# #
+# #   kubectl get svc -n envoy | grep local-gateway
+# #
+# # Or use the helper script:
+# #
+# #   ./apps/metallb/get-gateway-ips.sh
+# #
+# # The external-dns-local will automatically use this IP for DNS records.
+
+# ---
+# # ============================================================================
+# # Trusting Self-Signed Certificates
+# # ============================================================================
+# #
+# # To avoid browser warnings with self-signed certificates:
+# #
+# # 1. Export the CA certificate:
+# #    kubectl get secret -n envoy wildcard-local-tls -o jsonpath='{.data.ca\.crt}' | base64 -d > local-ca.crt
+# #
+# # 2. Trust it on your devices:
+# #
+# #    macOS:
+# #      sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain local-ca.crt
+# #
+# #    Linux:
+# #      sudo cp local-ca.crt /usr/local/share/ca-certificates/
+# #      sudo update-ca-certificates
+# #
+# #    Windows:
+# #      certutil -addstore -f "ROOT" local-ca.crt
+# #
+# #    iOS/Android:
+# #      Email the cert to yourself and install via Settings
+# #
+# # 3. Restart your browser
+# #
+# # Alternative: Use a Private CA (see Certificate Option 2 above) and trust
+# # the root CA certificate on all your devices once.

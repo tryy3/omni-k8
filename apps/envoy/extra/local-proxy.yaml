@@ -1,0 +1,49 @@
+# Local Network EnvoyProxy Configuration
+# This creates a separate EnvoyProxy and GatewayClass for local network access
+# using MetalLB LoadBalancer instead of Tailscale
+#
+# Usage:
+# - Use gatewayClassName: "local" in your Gateway resources to expose services
+#   on your local network via MetalLB IP addresses
+# - Use gatewayClassName: "tailscale" for Tailscale-only access
+#
+# This allows you to run dual gateways:
+# - One for Tailscale access (existing)
+# - One for local network access (this configuration)
+
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: local-network-proxy
+  namespace: envoy
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyService:
+        type: LoadBalancer
+        # Use MetalLB instead of Tailscale
+        loadBalancerClass: metallb.universe.tf/metallb
+        annotations:
+          # Optional: Request a specific IP from MetalLB pool
+          # metallb.universe.tf/loadBalancerIPs: 192.168.1.240
+
+          # Optional: Specify which IP pool to use
+          metallb.universe.tf/address-pool: local-network-pool
+
+          # Description for documentation
+          description: "Local network gateway for non-Tailscale devices"
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: local
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+  parametersRef:
+    group: gateway.envoyproxy.io
+    kind: EnvoyProxy
+    name: local-network-proxy
+    namespace: envoy
