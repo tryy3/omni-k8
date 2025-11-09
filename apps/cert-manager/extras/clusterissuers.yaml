@@ -16,7 +16,7 @@ spec:
             config:
               secretRef:
                 name: cert-dnsimple-secret
-              accountID: 159380
+              accountID: "159380"
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -36,4 +36,4 @@ spec:
             config:
               secretRef:
                 name: cert-dnsimple-secret
-              accountID: 159380
+              accountID: "159380"
