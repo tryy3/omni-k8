@@ -7,6 +7,8 @@ external-dns:
   domainFilters:
     - tryy3.local # CHANGE THIS to your local domain
 
+  namespace: external-dns-local
+
   # Label filter - only process resources with this label
   labelFilter: external-dns-local==enabled
 
@@ -15,7 +17,7 @@ external-dns:
   logFormat: json
 
   policy: sync
-  registry: noop
+  registry: txt
 
   extraArgs:
     - "--txt-prefix=reg-%{record_type}-"
