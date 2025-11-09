@@ -11,7 +11,7 @@ external-dns:
   labelFilter: external-dns-local==enabled
 
   sources: ["service"]
-  logLevel: info
+  logLevel: debug
   logFormat: json
 
   policy: sync
