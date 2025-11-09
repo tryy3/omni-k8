@@ -22,6 +22,10 @@ spec:
             - --domain-filter=tryy3.dev # (optional) limit to only example.com domains; change to match the zone you create in DNSimple.
             - --provider=dnsimple
             - --registry=txt
+            - --gateway-label-filter=external-dns==enabled
+            - --source=gateway-httproute
+            - --domain-filter=tryy3.dev
+            - --policy=sync
             - --log-level=debug
           env:
             - name: DNSIMPLE_OAUTH
