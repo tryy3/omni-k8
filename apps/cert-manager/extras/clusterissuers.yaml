@@ -39,3 +39,12 @@ spec:
               tokenSecretRef:
                 name: cert-dnsimple-secret
                 key: token
+---
+# Self-signed ClusterIssuer for local domains (*.tryy3.local)
+# This issuer creates self-signed certificates without requiring external validation
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: selfsigned-issuer
+spec:
+  selfSigned: {}
