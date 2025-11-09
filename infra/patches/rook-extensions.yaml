@@ -1,6 +1,0 @@
-cluster:
-  install:
-    extensions:
-      - image: ghcr.io/siderolabs/udev:v1.11.1
-      - image: ghcr.io/siderolabs/lvm2:v1.11.1
-      - image: ghcr.io/siderolabs/xfsprogs:v1.11.1

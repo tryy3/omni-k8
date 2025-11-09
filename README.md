@@ -5,14 +5,14 @@ It deploys a Talos Kubernetes cluster using Omni, with the following tooling:
 
 * Cilium for CNI & Hubble UI for observability
 * ArgoCD for application management
-* Rook Ceph for persistent volume management
+* Longhorn for persistent volume management
 * Prometheus & Grafana for monitoring
 
 ## Prereqs
 
 An [Omni account](https://signup.siderolabs.io/), and some machines registered to it.
 How the machines are started and joined to the Omni instance are not covered in this README, but [documentation is available](https://omni.siderolabs.com/tutorials/getting_started/).
-With the default configuration, a minimum of 6 machines, 3 of which with additional block devices for persistent storage.
+With the default configuration, a minimum of 5 machines (3 control-plane + 2 workers).
 
 This example uses [Machine Classes](https://omni.siderolabs.com/how-to-guides/create-a-machine-class) called `omni-contrib-controlplane` and `omni-contrib-workers`.
 How they are defined is entirely dependent on the infrastructure available, they would need to be configured on the Omni instance.
@@ -33,6 +33,27 @@ Omni will then being to allocate your machines, install Talos, and configure and
 This setup makes use of the [Omni Workload Proxy](https://omni.siderolabs.com/how-to-guides/expose-an-http-service-from-a-cluster) feature,
 which allows access to the HTTP front end services *without* the need of a separate external Ingress Controller or LoadBalancer.
 Additionally, it leverages Omni's built-in authentication to protect the services, even those services that don't support authentication themselves.
+
+## Storage
+
+This cluster uses **Longhorn** for persistent volume management.
+
+- **Storage Class:** `longhorn` (default)
+- **Replica Count:** 2 (configured for 2 worker nodes)
+- **Data Path:** `/var/lib/longhorn` on each node
+- **Dashboard:** Accessible via Omni Workload Proxy on port 50083
+
+### Talos System Extensions Required
+
+Longhorn requires the following Talos system extensions (already configured):
+- `iscsi-tools` - iSCSI daemon for volume operations
+- `util-linux-tools` - Linux utilities including fstrim
+
+### Important: Talos Node Upgrades
+
+When upgrading Talos nodes, verify that Omni preserves `/var/lib/longhorn` to prevent data loss. Test upgrades on a single worker node first and monitor the Longhorn UI to ensure replicas remain intact.
+
+See [LONGHORN_OPERATIONS.md](LONGHORN_OPERATIONS.md) for detailed operations guide.
 
 ## Applications
 

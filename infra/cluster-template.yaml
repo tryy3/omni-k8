@@ -9,15 +9,25 @@ features:
 patches:
   - name: cni
     file: patches/cni.yaml
-  - name: rook-extensions
-    file: patches/rook-extensions.yaml
+  - name: longhorn
+    file: patches/longhorn.yaml
   - name: tailscale
     file: patches/tailscale.yaml
+systemExtensions:
+  - siderolabs/util-linux-tools
+  - siderolabs/iscsi-tools
+  - siderolabs/glibc
+  # - siderolabs/qemu-guest-agent # Move this to tag for VM only
+  - siderolabs/tailscale
 ---
 kind: ControlPlane
 machineClass:
   name: omni-controlplanes
-  size: 2
+  size: 3
+# machines:
+#   - 5c2de445-62af-6d38-4332-bd5fb535ec5e
+#   - e26438ec-98ca-186f-3db5-0b8b7a5acbbd
+#   - f6c1e38d-0fc5-41ea-7c69-600158af3ca3
 patches:
   - name: cilium
     file: patches/cilium.yaml
@@ -31,3 +41,59 @@ name: workers
 machineClass:
   name: omni-workers
   size: unlimited
+# machines:
+#   - 39633237-3538-3738-3735-666536393666
+#   - 0f0186bb-bf48-8540-9ba4-f4f480e11ea3
+# ---
+# # Talos-Control-Plane-3
+# # talos-l3n-xfq
+# kind: Machine
+# name: 5c2de445-62af-6d38-4332-bd5fb535ec5e
+# labels:
+#   role: control-plane
+#   machine-type: vm
+# systemExtensions:
+#   - siderolabs/qemu-guest-agent
+
+# ---
+# # Rock Pi 4C
+# # talos-ixu-s51
+# kind: Machine
+# name: 39633237-3538-3738-3735-666536393666
+# labels:
+#   role: worker
+#   machine-type: rock-pi-4c
+# systemExtensions:
+
+# ---
+# # Talos-Worker-1
+# # talos-mc9-u86
+# kind: Machine
+# name: 0f0186bb-bf48-8540-9ba4-f4f480e11ea3
+# labels:
+#   role: worker
+#   machine-type: vm
+# systemExtensions:
+#   - siderolabs/qemu-guest-agent
+
+# ---
+# # Talos-Control-Plane-2
+# # talos-k6o-yew
+# kind: Machine
+# name: e26438ec-98ca-186f-3db5-0b8b7a5acbbd
+# labels:
+#   role: control-plane
+#   machine-type: vm
+# systemExtensions:
+#   - siderolabs/qemu-guest-agent
+
+# ---
+# # Talos-Control-Plane-1
+# # talos-1j9-844
+# kind: Machine
+# name: f6c1e38d-0fc5-41ea-7c69-600158af3ca3
+# labels:
+#   role: control-plane
+#   machine-type: vm
+# systemExtensions:
+#   - siderolabs/qemu-guest-agent
