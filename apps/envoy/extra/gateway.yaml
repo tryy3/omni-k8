@@ -48,3 +48,20 @@ spec:
           name: argocd-server
           namespace: argocd
           port: 80
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: test-tryy3-dev
+  namespace: envoy
+spec:
+  secretName: test-tryy3-dev-tls
+  duration: 2160h # 90d
+  renewBefore: 720h # 30d
+  commonName: test.tryy3.dev
+  dnsNames:
+    - test.tryy3.dev
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
