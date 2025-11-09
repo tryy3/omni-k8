@@ -16,6 +16,7 @@ spec:
             config:
               secretRef:
                 name: cert-dnsimple-secret
+                namespace: cert-manager
               accountID: "159380"
 ---
 apiVersion: cert-manager.io/v1
@@ -36,4 +37,5 @@ spec:
             config:
               secretRef:
                 name: cert-dnsimple-secret
+                namespace: cert-manager
               accountID: "159380"
