@@ -12,25 +12,25 @@ spec:
                   revision: HEAD
                   repoPath: apps/*/*
           - git:
-              repoURL: '{{ repoURL }}'
-              revision: '{{ revision }}'
+              repoURL: "{{ repoURL }}"
+              revision: "{{ revision }}"
               directories:
-                - path: '{{ repoPath }}'
+                - path: "{{ repoPath }}"
   syncPolicy:
     preserveResourcesOnDeletion: true
   template:
     metadata:
-      name: '{{ path[1] }}-{{ path.basenameNormalized }}'
+      name: "{{ path[1] }}-{{ path.basenameNormalized }}"
       namespace: argocd
     spec:
       project: default
       source:
-        repoURL: '{{ repoURL }}'
-        targetRevision: '{{ revision }}'
-        path: '{{ path }}'
+        repoURL: "{{ repoURL }}"
+        targetRevision: "{{ revision }}"
+        path: "{{ path }}"
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{ path[1] }}'
+        namespace: "{{ path[1] }}"
       syncPolicy:
         automated:
           prune: false
@@ -47,6 +47,11 @@ spec:
             factor: 2
             maxDuration: 5m
       ignoreDifferences:
+        # Ignore Secrets managed by ExternalSecrets operator
+        - group: ""
+          kind: Secret
+          jqPathExpressions:
+            - .metadata.ownerReferences[] | select(.kind == "ExternalSecret")
         # Cilium generated certs
         - name: cilium-ca
           kind: Secret
