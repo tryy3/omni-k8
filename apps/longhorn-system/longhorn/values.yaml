@@ -1,6 +1,6 @@
 longhorn:
   defaultSettings:
-    defaultReplicaCount: 2
+    defaultReplicaCount: "2"
     defaultDataPath: /var/lib/longhorn
 
   persistence:
