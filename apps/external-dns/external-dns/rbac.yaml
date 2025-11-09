@@ -11,6 +11,9 @@ rules:
   - apiGroups: [""]
     resources: ["services", "pods"]
     verbs: ["get", "watch", "list"]
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "watch", "list"]
   - apiGroups: ["discovery.k8s.io"]
     resources: ["endpointslices"]
     verbs: ["get", "watch", "list"]
@@ -19,6 +22,20 @@ rules:
     verbs: ["get", "watch", "list"]
   - apiGroups: [""]
     resources: ["nodes"]
+    verbs: ["get", "watch", "list"]
+  - apiGroups: ["gateway.networking.k8s.io"]
+    resources:
+      [
+        "gateways",
+        "httproutes",
+        "tcproutes",
+        "udproutes",
+        "tlsroutes",
+        "grpcroutes",
+      ]
+    verbs: ["get", "watch", "list"]
+  - apiGroups: ["cert-manager.io"]
+    resources: ["certificates"]
     verbs: ["get", "watch", "list"]
 
 ---
