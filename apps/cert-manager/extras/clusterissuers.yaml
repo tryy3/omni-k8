@@ -14,10 +14,10 @@ spec:
             groupName: acme.dnsimple.com
             solverName: dnsimple
             config:
-              secretRef:
-                name: cert-dnsimple-secret
-                namespace: cert-manager
               accountID: "159380"
+              tokenSecretRef:
+                name: cert-dnsimple-secret
+                key: token
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -35,7 +35,7 @@ spec:
             groupName: acme.dnsimple.com
             solverName: dnsimple
             config:
-              secretRef:
-                name: cert-dnsimple-secret
-                namespace: cert-manager
               accountID: "159380"
+              tokenSecretRef:
+                name: cert-dnsimple-secret
+                key: token
