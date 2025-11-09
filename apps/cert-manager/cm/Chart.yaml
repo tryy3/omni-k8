@@ -1,7 +1,7 @@
 apiVersion: v2
 name: cert-manager
-version: v1.19.1 # Or whatever version you want
+version: v1.19.1
 dependencies:
   - name: cert-manager
-    version: v1.19.1 # Adjust to your desired version
+    version: v1.19.1
     repository: https://charts.jetstack.io

@@ -1,5 +1,6 @@
 # Standard cert-manager configuration
-# Most defaults are fine for a basic setup
-installCRDs: true # This ensures the Issuer, Certificate, etc. CRDs are installed
 crds:
   enabled: true
+global:
+  leaderElection:
+    namespace: cert-manager
