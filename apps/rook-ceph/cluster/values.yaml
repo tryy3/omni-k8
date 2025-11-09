@@ -1,0 +1,37 @@
+rook-ceph-cluster:
+  operatorNamespace: rook-ceph
+
+  monitoring:
+    enabled: true
+    createPrometheusRules: true
+
+  cephClusterSpec:
+    cephVersion:
+      image: quay.io/ceph/ceph:v18.2.1
+
+    dataDirHostPath: /var/lib/rook
+
+    storage:
+      useAllNodes: true
+      useAllDevices: true
+
+    placement:
+      all:
+        tolerations:
+          - key: node-role.kubernetes.io/control-plane
+            operator: Exists
+            effect: NoSchedule
+          - key: node.kubernetes.io/not-ready
+            operator: Exists
+            effect: NoExecute
+
+  cephBlockPools:
+    - name: ceph-blockpool
+      spec:
+        failureDomain: host
+        replicated:
+          size: 3
+      storageClass:
+        enabled: true
+        name: ceph-block
+        isDefault: true

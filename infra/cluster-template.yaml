@@ -9,6 +9,8 @@ features:
 patches:
   - name: cni
     file: patches/cni.yaml
+  - name: rook-extensions
+    file: patches/rook-extensions.yaml
   - name: tailscale
     file: patches/tailscale.yaml
 ---
