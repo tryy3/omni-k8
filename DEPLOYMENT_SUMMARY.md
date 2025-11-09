@@ -93,6 +93,23 @@ watch kubectl -n rook-ceph get pods
 
 **Expected:** Rook namespace should be cleaned up by ArgoCD when it syncs.
 
+**⚠️ IMPORTANT - Fresh Install Issue:**
+
+If this is a **fresh Longhorn installation** (not an upgrade), ArgoCD may get stuck on the pre-upgrade hook. This is a known issue where the hook requires a service account that doesn't exist yet.
+
+**Workaround for fresh installs:**
+```bash
+# Install Longhorn directly first
+kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.10.0/deploy/longhorn.yaml
+
+# Wait for it to deploy
+watch kubectl -n longhorn-system get pods
+
+# ArgoCD will then recognize and manage it
+```
+
+This is a **one-time issue**. Once Longhorn is installed, future updates via Git will work normally.
+
 ### Step 4: Monitor Cluster Update
 Omni will detect the cluster-template.yaml change and apply the Longhorn patch (kubelet extraMounts).
 
@@ -277,6 +294,25 @@ Once everything is working:
 - **Operations Guide:** LONGHORN_OPERATIONS.md
 - **Longhorn Docs:** https://longhorn.io/docs/1.10.0/
 - **Talos + Longhorn:** https://longhorn.io/docs/1.10.0/advanced-resources/os-distro-specific/talos-linux-support/
+
+---
+
+## Fresh Install vs Upgrade
+
+### Fresh Install (New Cluster)
+If installing Longhorn for the **first time**, you may encounter a pre-upgrade hook issue with ArgoCD. The workaround is to install Longhorn directly first:
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.10.0/deploy/longhorn.yaml
+```
+
+Then ArgoCD will recognize and manage it going forward.
+
+### Upgrades (Existing Longhorn)
+Once Longhorn is installed, all future upgrades work normally through Git:
+- The pre-upgrade hook will function correctly
+- ArgoCD sync will work as expected
+- The hook validates upgrade compatibility
 
 ---
 
