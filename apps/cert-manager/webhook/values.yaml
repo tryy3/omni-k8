@@ -6,7 +6,7 @@ cert-manager-webhook-dnsimple:
 
   certManager:
     namespace: cert-manager
-    serviceAccountName: cert-manager
+    serviceAccountName: cert-manager-cm
   # logLevel: 3
   dnsimple:
     # token: ""
