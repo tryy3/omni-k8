@@ -17,6 +17,9 @@ external-dns:
   policy: sync
   registry: noop
 
+  extraArgs:
+    - "--txt-prefix=reg-%{record_type}-"
+
   # Provider configuration - use webhook for Unbound
   provider:
     name: webhook
@@ -53,3 +56,15 @@ external-dns:
         # Optional: Dry run mode (set to "true" for testing)
         - name: DRY_RUN
           value: "false"
+      livenessProbe:
+        httpGet:
+          path: /health
+          port: http-webhook
+        initialDelaySeconds: 10
+        timeoutSeconds: 5
+      readinessProbe:
+        httpGet:
+          path: /ready
+          port: http-webhook
+        initialDelaySeconds: 10
+        timeoutSeconds: 5
