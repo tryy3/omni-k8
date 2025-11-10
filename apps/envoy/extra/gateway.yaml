@@ -35,6 +35,19 @@ spec:
           - group: ""
             kind: Secret
             name: spoolman-tryy3-dev-tls
+    - name: https-monitoring
+      protocol: HTTPS
+      port: 443
+      hostname: "monitoring.tryy3.dev"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: monitoring-tryy3-dev-tls
 
 ---
 apiVersion: gateway.networking.k8s.io/v1
