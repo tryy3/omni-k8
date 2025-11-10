@@ -6,7 +6,7 @@ spec:
   provider:
     vault:
       server: "https://vault.tryy3.dev/"
-      path: "secret"
+      path: "secrets"
       # Version is the Vault KV secret engine version.
       # This can be either "v1" or "v2", defaults to "v2"
       version: "v2"
