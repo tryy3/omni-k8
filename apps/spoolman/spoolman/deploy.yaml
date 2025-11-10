@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: spoolman
-          image: harbor.tryy3.dev/donkie/spoolman:edge
+          image: ghcr.io/donkie/spoolman:0.22.1 # Do I still need to run my own version?
           imagePullPolicy: IfNotPresent
           resources:
             limits:
