@@ -60,31 +60,6 @@ spec:
       port: 80
       targetPort: 8000
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: spoolman-ingress
-  namespace: default
-  annotations:
-    cert-manager.io/cluster-issuer: cloudflare-letsencrypt-issuer
-spec:
-  rules:
-    - host: spoolman.tryy3.dev
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: spoolman-svc
-                port:
-                  number: 80
-  tls:
-    - hosts:
-        - spoolman.tryy3.dev
-      # Secret that Cert Manager will create with certificate
-      secretName: spoolman-tryy3-dev-tls
----
 apiVersion: v1
 kind: PersistentVolume
 metadata:
