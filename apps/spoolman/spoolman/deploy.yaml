@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spoolman
+  namespace: default
+  labels:
+    app: spoolman
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: spoolman
+  template:
+    metadata:
+      labels:
+        app: spoolman
+    spec:
+      containers:
+        - name: spoolman
+          image: harbor.tryy3.dev/donkie/spoolman:edge
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+            requests:
+              cpu: "25m"
+              memory: "128Mi"
+          ports:
+            - containerPort: 8000
+          env:
+            - name: TZ
+              value: Europe/Stockholm
+            - name: EXTERNAL_DB_URL
+              value: https://tryy3.github.io/SpoolmanDB/
+            - name: EXTERNAL_DB_SYNC_INTERVAL
+              value: "120"
+            - name: SPOOLMAN_LOGGING_LEVEL
+              value: DEBUG
+          volumeMounts:
+            - name: spoolman-mount
+              mountPath: /home/app/.local/share/spoolman
+      volumes:
+        - name: spoolman-mount
+          persistentVolumeClaim:
+            claimName: spoolman-data
+      imagePullSecrets:
+        - name: harbor.tryy3.dev-registry
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spoolman-svc
+  namespace: default
+spec:
+  selector:
+    app: spoolman
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: spoolman-ingress
+  namespace: default
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare-letsencrypt-issuer
+spec:
+  rules:
+    - host: spoolman.tryy3.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: spoolman-svc
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - spoolman.tryy3.dev
+      # Secret that Cert Manager will create with certificate
+      secretName: spoolman-tryy3-dev-tls
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: spoolman-pv
+  namespace: default
+spec:
+  capacity:
+    storage: 20Gi
+  nfs:
+    server: 100.109.86.23
+    path: /mnt/user/spoolman-data
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  mountOptions:
+    - hard
+    - nfsvers=4.2
+    - rw
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: spoolman-data
+  namespace: default
+spec:
+  # Empty storage class disables dynamic provisioning
+  storageClassName: ""
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  volumeName: spoolman-pv
