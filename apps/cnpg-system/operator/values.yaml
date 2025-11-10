@@ -1,0 +1,23 @@
+cloudnative-pg:
+  # Minimal resource requests for homelab
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+  # Enable monitoring
+  monitoring:
+    # PodMonitor for operator metrics
+    podMonitorEnabled: true
+    # Grafana ConfigMap with dashboard
+    grafanaDashboard:
+      create: false  # We'll deploy dashboards separately via Helm
+
+  # Controller configuration
+  config:
+    # Inherit defaults from chart
+    data: {}
+

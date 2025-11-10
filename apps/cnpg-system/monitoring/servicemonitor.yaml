@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: cnpg-cluster-metrics
+  namespace: cnpg-system
+  labels:
+    app.kubernetes.io/name: cloudnative-pg-cluster
+spec:
+  # This ServiceMonitor will discover PostgreSQL cluster pods across all namespaces
+  namespaceSelector:
+    any: true
+  selector:
+    matchLabels:
+      cnpg.io/cluster: ""  # Matches any CNPG cluster
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+

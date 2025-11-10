@@ -1,0 +1,11 @@
+cluster:
+  # Configure dashboards to be discovered by Grafana sidecar
+  grafana:
+    # Add label for Grafana sidecar discovery
+    sidecarLabel: grafana_dashboard
+    sidecarLabelValue: "1"
+    
+  # Namespace where dashboards will be deployed
+  # (monitoring namespace matches where Grafana is deployed)
+  namespaceOverride: monitoring
+

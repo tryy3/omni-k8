@@ -1,0 +1,116 @@
+# CloudNativePG Cluster Template
+# 
+# This is a template for creating isolated PostgreSQL clusters per application.
+# Follow the <app-name>-pg naming pattern (e.g., nextcloud-pg, gitea-pg)
+#
+# Usage:
+#   1. Copy this file to your app directory: apps/<namespace>/<app-name>-pg/cluster.yaml
+#   2. Replace <APP_NAME> with your application name
+#   3. Replace <NAMESPACE> with your target namespace
+#   4. Adjust resources, storage size, and PostgreSQL version as needed
+#   5. Deploy via ArgoCD (will auto-discover via ApplicationSet)
+#
+# IMPORTANT: For migrations, match the PostgreSQL version to your source database
+# You can upgrade to a newer version later using CNPG's automatic pg_upgrade
+
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: <APP_NAME>-pg
+  namespace: <NAMESPACE>
+spec:
+  # Number of instances (1 primary + N replicas)
+  # 2 instances provides HA with automatic failover
+  instances: 2
+
+  # PostgreSQL version
+  # Choose a stable version: 16.x (current stable) or 17.x (latest)
+  # For migrations: Use the same major version as your source database
+  # After migration, you can upgrade by changing this image
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.6
+
+  # Bootstrap configuration
+  bootstrap:
+    initdb:
+      database: app
+      owner: app
+      # Optional: Specify additional PostgreSQL extensions
+      # postInitSQL:
+      #   - CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
+
+  # Storage configuration
+  storage:
+    storageClass: longhorn
+    size: 10Gi  # Adjust based on your needs (5Gi, 20Gi, etc.)
+
+  # Resource requests and limits
+  # These are minimal defaults suitable for homelab/low-traffic apps
+  # Increase if your application requires more resources
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+  # Enable monitoring (Prometheus metrics)
+  monitoring:
+    enabled: true
+    # Metrics are exposed on port 9187 and scraped by Prometheus ServiceMonitor
+
+  # PostgreSQL configuration
+  postgresql:
+    parameters:
+      # Common performance tuning parameters (adjust as needed)
+      max_connections: "100"
+      shared_buffers: "128MB"
+      effective_cache_size: "512MB"
+      maintenance_work_mem: "64MB"
+      checkpoint_completion_target: "0.9"
+      wal_buffers: "4MB"
+      default_statistics_target: "100"
+      random_page_cost: "1.1"
+      effective_io_concurrency: "200"
+      work_mem: "2MB"
+      min_wal_size: "1GB"
+      max_wal_size: "4GB"
+
+  # Backup configuration (optional - requires S3 setup)
+  # Uncomment and configure when S3 storage is ready
+  # See BACKUP_SETUP.md for detailed instructions
+  # backup:
+  #   barmanObjectStore:
+  #     destinationPath: s3://your-bucket/your-path/<APP_NAME>-pg
+  #     s3Credentials:
+  #       accessKeyId:
+  #         name: s3-backup-credentials
+  #         key: ACCESS_KEY_ID
+  #       secretAccessKey:
+  #         name: s3-backup-credentials
+  #         key: SECRET_ACCESS_KEY
+  #     wal:
+  #       compression: gzip
+  #       encryption: AES256
+  #     data:
+  #       compression: gzip
+  #       encryption: AES256
+  #       jobs: 2
+  #   retentionPolicy: "30d"
+
+---
+# Optional: ScheduledBackup resource for automated backups
+# Uncomment when backup configuration is ready
+# apiVersion: postgresql.cnpg.io/v1
+# kind: ScheduledBackup
+# metadata:
+#   name: <APP_NAME>-pg-daily-backup
+#   namespace: <NAMESPACE>
+# spec:
+#   schedule: "0 2 * * *"  # Daily at 2 AM
+#   backupOwnerReference: self
+#   cluster:
+#     name: <APP_NAME>-pg
+#   method: barmanObjectStore
+#   immediate: true  # Take first backup immediately
+
