@@ -32,9 +32,9 @@ spec:
             - name: TZ
               value: Europe/Stockholm
             - name: EXTERNAL_DB_URL
-              value: https://tryy3.github.io/SpoolmanDB/
-            - name: EXTERNAL_DB_SYNC_INTERVAL
-              value: "120"
+              #   value: https://tryy3.github.io/SpoolmanDB/
+              # - name: EXTERNAL_DB_SYNC_INTERVAL
+              # value: "120"
             - name: SPOOLMAN_LOGGING_LEVEL
               value: DEBUG
           volumeMounts:
