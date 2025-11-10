@@ -73,3 +73,18 @@ spec:
             - /data/ca.crt
             - /data/tls.crt
             - /data/tls.key
+        # Ignore cert-manager Certificate status fields
+        - group: cert-manager.io
+          kind: Certificate
+          jsonPointers:
+            - /status
+        # Ignore Gateway API HTTPRoute status fields
+        - group: gateway.networking.k8s.io
+          kind: HTTPRoute
+          jsonPointers:
+            - /status
+        # Ignore Gateway API Gateway status fields
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          jsonPointers:
+            - /status
