@@ -25,6 +25,11 @@ kube-prometheus-stack:
                 storage: 10Gi
   prometheus:
     prometheusSpec:
+      # Retention settings
+      retention: 30d
+      retentionSize: 45GB
+      # Enable WAL compression to reduce storage usage by ~50%
+      walCompression: true
       storageSpec:
         volumeClaimTemplate:
           spec:
@@ -32,7 +37,7 @@ kube-prometheus-stack:
               - ReadWriteOnce
             resources:
               requests:
-                storage: 150Gi
+                storage: 50Gi
   grafana:
     grafana.ini:
       server:
