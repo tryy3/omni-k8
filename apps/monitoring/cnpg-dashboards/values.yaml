@@ -5,6 +5,13 @@ cluster:
     sidecarLabel: grafana_dashboard
     sidecarLabelValue: "1"
     
+    # Configure datasource to match kube-prometheus-stack
+    datasource:
+      # Name must match the datasource name in Grafana
+      name: Prometheus
+      # UID must match the datasource uid
+      uid: prometheus
+    
   # Namespace where dashboards will be deployed
   # (monitoring namespace matches where Grafana is deployed)
   namespaceOverride: monitoring
