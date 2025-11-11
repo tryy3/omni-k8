@@ -21,6 +21,3 @@ spec:
     limits:
       cpu: 1000m
       memory: 1Gi
-
-  monitoring:
-    enabled: true
