@@ -1,0 +1,143 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cozytemp-server
+  labels:
+    app: cozytemp-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cozytemp-server
+  template:
+    metadata:
+      labels:
+        app: cozytemp-server
+    spec:
+      containers:
+        - name: cozytemp-server
+          image: ghcr.io/tryy3/cozytemp_flutter_serverpod/flutter-server:latest
+          ports:
+            - name: api
+              containerPort: 8080
+              protocol: TCP
+            - name: insights
+              containerPort: 8081
+              protocol: TCP
+            - name: web
+              containerPort: 8082
+              protocol: TCP
+          env:
+            # API Settings
+            - name: SERVERPOD_API_SERVER_PORT
+              value: "8080"
+            - name: SERVERPOD_API_SERVER_PUBLIC_HOST
+              value: "api.cozytemp.tryy3.dev"
+            - name: SERVERPOD_API_SERVER_PUBLIC_PORT
+              value: "443"
+            - name: SERVERPOD_API_SERVER_PUBLIC_SCHEME
+              value: "https"
+            
+            # Insights Settings
+            - name: SERVERPOD_INSIGHTS_SERVER_PORT
+              value: "8081"
+            - name: SERVERPOD_INSIGHTS_SERVER_PUBLIC_HOST
+              value: "insights.cozytemp.tryy3.dev"
+            - name: SERVERPOD_INSIGHTS_SERVER_PUBLIC_PORT
+              value: "443"
+            - name: SERVERPOD_INSIGHTS_SERVER_PUBLIC_SCHEME
+              value: "https"
+            
+            # Web Settings
+            - name: SERVERPOD_WEB_SERVER_PORT
+              value: "8082"
+            - name: SERVERPOD_WEB_SERVER_PUBLIC_HOST
+              value: "app.cozytemp.tryy3.dev"
+            - name: SERVERPOD_WEB_SERVER_PUBLIC_PORT
+              value: "443"
+            - name: SERVERPOD_WEB_SERVER_PUBLIC_SCHEME
+              value: "https"
+            
+            # Database configuration (from CloudNativePG auto-created secret)
+            - name: SERVERPOD_DATABASE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: cozytemp-pg-app
+                  key: host
+            - name: SERVERPOD_DATABASE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: cozytemp-pg-app
+                  key: port
+            - name: SERVERPOD_DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: cozytemp-pg-app
+                  key: dbname
+            - name: SERVERPOD_DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cozytemp-pg-app
+                  key: username
+            - name: SERVERPOD_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cozytemp-pg-app
+                  key: password
+            - name: SERVERPOD_DATABASE_REQUIRE_SSL
+              value: "false"
+            
+            # Service secret (from ExternalSecret)
+            - name: SERVERPOD_SERVICE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: cozytemp-service-secret
+                  key: service-secret
+            
+            # Optional settings
+            - name: SERVERPOD_MAX_REQUEST_SIZE
+              value: "524288"
+            - name: SERVERPOD_SESSION_LOGS_PERSISTENT_ENABLED
+              value: "true"
+            - name: SERVERPOD_SESSION_LOGS_CONSOLE_ENABLED
+              value: "true"
+            - name: SERVERPOD_SESSION_LOGS_CONSOLE_LOG_FORMAT
+              value: "json"
+          
+          args:
+            - "--mode"
+            - "production"
+            - "--server-id"
+            - "default"
+            - "--logging"
+            - "normal"
+            - "--role"
+            - "monolith"
+            - "--apply-migrations"
+          
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 40
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+
