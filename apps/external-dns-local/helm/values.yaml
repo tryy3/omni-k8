@@ -43,8 +43,8 @@ external-dns:
           value: "tcp://192.168.1.3:8953" # ← Your Unbound server IP/hostname
 
         # Domain filter
-        - name: REGEXP_DOMAIN_FILTER
-          value: "*.tryy3.local" # ← Your local domain
+        - name: DOMAIN_FILTER
+          value: "tryy3.local" # ← Your local domain
 
         # Logging
         - name: LOG_LEVEL
