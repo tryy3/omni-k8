@@ -8,6 +8,8 @@ kind: HTTPRoute
 metadata:
   name: cozytemp-api-local-route
   namespace: cozytemp
+  labels:
+    external-dns-local: enabled
 spec:
   parentRefs:
     - group: gateway.networking.k8s.io
@@ -36,6 +38,8 @@ kind: HTTPRoute
 metadata:
   name: cozytemp-insights-local-route
   namespace: cozytemp
+  labels:
+    external-dns-local: enabled
 spec:
   parentRefs:
     - group: gateway.networking.k8s.io
@@ -64,6 +68,8 @@ kind: HTTPRoute
 metadata:
   name: cozytemp-web-local-route
   namespace: cozytemp
+  labels:
+    external-dns-local: enabled
 spec:
   parentRefs:
     - group: gateway.networking.k8s.io
