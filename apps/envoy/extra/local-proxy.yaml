@@ -24,7 +24,8 @@ spec:
       envoyService:
         type: LoadBalancer
         # Use MetalLB instead of Tailscale
-        loadBalancerClass: metallb.universe.tf/metallb
+        # Note: loadBalancerClass is removed as MetalLB controller has issues with it
+        # MetalLB will still assign IPs based on the address-pool annotation
         annotations:
           # Optional: Request a specific IP from MetalLB pool
           # metallb.universe.tf/loadBalancerIPs: 192.168.1.240

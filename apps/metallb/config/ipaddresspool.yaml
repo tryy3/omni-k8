@@ -17,6 +17,7 @@ apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
   name: local-network-pool
+  namespace: metallb
 spec:
   # Define your IP range here - MUST BE CHANGED to match your network!
   addresses:
@@ -31,6 +32,7 @@ apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
 metadata:
   name: local-network-l2
+  namespace: metallb
 spec:
   ipAddressPools:
     - local-network-pool
