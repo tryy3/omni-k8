@@ -1,0 +1,208 @@
+# Local Network Gateway for Cozytemp
+# Access cozytemp locally without Tailscale using MetalLB LoadBalancer
+# Domains: api.cozytemp.tryy3.local, insights.cozytemp.tryy3.local, app.cozytemp.tryy3.local
+
+---
+# Gateway for local network access
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: cozytemp-local-gateway
+  namespace: envoy
+  labels:
+    external-dns-local: enabled
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned-issuer
+spec:
+  gatewayClassName: local
+  listeners:
+    - name: https-api
+      protocol: HTTPS
+      port: 443
+      hostname: "api.cozytemp.tryy3.local"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: api-cozytemp-tryy3-local-tls
+    - name: https-insights
+      protocol: HTTPS
+      port: 443
+      hostname: "insights.cozytemp.tryy3.local"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: insights-cozytemp-tryy3-local-tls
+    - name: https-app
+      protocol: HTTPS
+      port: 443
+      hostname: "app.cozytemp.tryy3.local"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: app-cozytemp-tryy3-local-tls
+
+---
+# ===== CERTIFICATES =====
+# Self-signed certificates for local domains
+
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: api-cozytemp-tryy3-local
+  namespace: envoy
+spec:
+  secretName: api-cozytemp-tryy3-local-tls
+  duration: 87600h # 10 years
+  renewBefore: 720h # 30 days
+  isCA: false
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  commonName: api.cozytemp.tryy3.local
+  dnsNames:
+    - api.cozytemp.tryy3.local
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: insights-cozytemp-tryy3-local
+  namespace: envoy
+spec:
+  secretName: insights-cozytemp-tryy3-local-tls
+  duration: 87600h # 10 years
+  renewBefore: 720h # 30 days
+  isCA: false
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  commonName: insights.cozytemp.tryy3.local
+  dnsNames:
+    - insights.cozytemp.tryy3.local
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: app-cozytemp-tryy3-local
+  namespace: envoy
+spec:
+  secretName: app-cozytemp-tryy3-local-tls
+  duration: 87600h # 10 years
+  renewBefore: 720h # 30 days
+  isCA: false
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  commonName: app.cozytemp.tryy3.local
+  dnsNames:
+    - app.cozytemp.tryy3.local
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+
+---
+# ===== HTTP ROUTES =====
+# Route local traffic to cozytemp service
+
+# Route 1: api.cozytemp.tryy3.local → cozytemp-server:8080
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: cozytemp-api-local-route
+  namespace: cozytemp
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: cozytemp-local-gateway
+      namespace: envoy
+      sectionName: https-api
+  hostnames:
+    - "api.cozytemp.tryy3.local"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: cozytemp-server
+          namespace: cozytemp
+          port: 8080
+
+---
+# Route 2: insights.cozytemp.tryy3.local → cozytemp-server:8081
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: cozytemp-insights-local-route
+  namespace: cozytemp
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: cozytemp-local-gateway
+      namespace: envoy
+      sectionName: https-insights
+  hostnames:
+    - "insights.cozytemp.tryy3.local"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: cozytemp-server
+          namespace: cozytemp
+          port: 8081
+
+---
+# Route 3: app.cozytemp.tryy3.local → cozytemp-server:8082
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: cozytemp-web-local-route
+  namespace: cozytemp
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: cozytemp-local-gateway
+      namespace: envoy
+      sectionName: https-app
+  hostnames:
+    - "app.cozytemp.tryy3.local"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: cozytemp-server
+          namespace: cozytemp
+          port: 8082
+
