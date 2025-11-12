@@ -1,59 +1,6 @@
-# ===== CERTIFICATES =====
-# Create TLS certificates for each domain
-
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: api-cozytemp-tryy3-dev
-  namespace: envoy
-spec:
-  secretName: api-cozytemp-tryy3-dev-tls
-  duration: 2160h # 90d
-  renewBefore: 720h # 30d
-  commonName: api.cozytemp.tryy3.dev
-  dnsNames:
-    - api.cozytemp.tryy3.dev
-  issuerRef:
-    name: letsencrypt-prod
-    kind: ClusterIssuer
-
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: insights-cozytemp-tryy3-dev
-  namespace: envoy
-spec:
-  secretName: insights-cozytemp-tryy3-dev-tls
-  duration: 2160h # 90d
-  renewBefore: 720h # 30d
-  commonName: insights.cozytemp.tryy3.dev
-  dnsNames:
-    - insights.cozytemp.tryy3.dev
-  issuerRef:
-    name: letsencrypt-prod
-    kind: ClusterIssuer
-
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: app-cozytemp-tryy3-dev
-  namespace: envoy
-spec:
-  secretName: app-cozytemp-tryy3-dev-tls
-  duration: 2160h # 90d
-  renewBefore: 720h # 30d
-  commonName: app.cozytemp.tryy3.dev
-  dnsNames:
-    - app.cozytemp.tryy3.dev
-  issuerRef:
-    name: letsencrypt-prod
-    kind: ClusterIssuer
-
----
 # ===== HTTP ROUTES =====
-# Route traffic from each domain to service ports
+# Route traffic from Tailscale gateway (tryy3.dev domains) to cozytemp service
+# Note: Certificates and Gateway listeners are in apps/envoy/extra/
 
 # Route 1: api.cozytemp.tryy3.dev → cozytemp-server:8080
 apiVersion: gateway.networking.k8s.io/v1

@@ -1,0 +1,54 @@
+# Local Network Gateway for Cozytemp
+# Access cozytemp locally without Tailscale using MetalLB LoadBalancer
+# Domains: api.cozytemp.tryy3.local, insights.cozytemp.tryy3.local, app.cozytemp.tryy3.local
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: cozytemp-local-gateway
+  namespace: envoy
+  labels:
+    external-dns-local: enabled
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned-issuer
+spec:
+  gatewayClassName: local
+  listeners:
+    - name: https-api
+      protocol: HTTPS
+      port: 443
+      hostname: "api.cozytemp.tryy3.local"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: api-cozytemp-tryy3-local-tls
+    - name: https-insights
+      protocol: HTTPS
+      port: 443
+      hostname: "insights.cozytemp.tryy3.local"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: insights-cozytemp-tryy3-local-tls
+    - name: https-app
+      protocol: HTTPS
+      port: 443
+      hostname: "app.cozytemp.tryy3.local"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: app-cozytemp-tryy3-local-tls
+
