@@ -9,7 +9,7 @@ external-dns:
   # Label filter - only process resources with this label
   labelFilter: external-dns-local==enabled
 
-  sources: ["service"]
+  sources: ["gateway-httproute", "gateway-grpcroute"]
   logLevel: debug
   logFormat: json
 
