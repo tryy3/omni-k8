@@ -12,6 +12,7 @@ spec:
       owner: app
 
   storage:
+    storageClass: longhorn-fast
     size: 20Gi
   
   resources:
