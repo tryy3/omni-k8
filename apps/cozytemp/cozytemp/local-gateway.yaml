@@ -16,7 +16,7 @@ spec:
       kind: Gateway
       name: cozytemp-local-gateway
       namespace: envoy
-      sectionName: https-api
+      sectionName: http-api
   hostnames:
     - "api.cozytemp.tryy3.test"
   rules:

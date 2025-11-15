@@ -15,18 +15,13 @@ metadata:
 spec:
   gatewayClassName: local
   listeners:
-    - name: https-api
-      protocol: HTTPS
-      port: 443
+    - name: http-api
+      protocol: HTTP
+      port: 80
       hostname: "api.cozytemp.tryy3.test"
       allowedRoutes:
         namespaces:
           from: All
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: api-cozytemp-tryy3-local-tls
     - name: https-insights
       protocol: HTTPS
       port: 443
