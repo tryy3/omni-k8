@@ -18,7 +18,7 @@ spec:
       namespace: envoy
       sectionName: https-api
   hostnames:
-    - "api.cozytemp.tryy3.local"
+    - "api.cozytemp.tryy3.test"
   rules:
     - matches:
         - path:
