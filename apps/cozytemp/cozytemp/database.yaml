@@ -2,6 +2,7 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: cozytemp-pg
+  namespace: cozytemp
 spec:
   instances: 1
   imageName: ghcr.io/cloudnative-pg/postgresql:17
