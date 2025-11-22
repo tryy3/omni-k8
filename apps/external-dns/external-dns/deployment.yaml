@@ -21,6 +21,8 @@ spec:
             - --source=service
             - --source=crd
             - --source=gateway-httproute
+            - --crd-source-apiversion=externaldns.k8s.io/v1alpha1
+            - --crd-source-kind=DNSEndpoint
             - --domain-filter=tryy3.dev
             - --provider=dnsimple
             - --registry=txt
