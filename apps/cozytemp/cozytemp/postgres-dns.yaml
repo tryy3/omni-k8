@@ -9,3 +9,4 @@ spec:
       recordType: CNAME
       targets:
         - gateway-envoy.fenrir-zebra.ts.net
+      ttl: 300
