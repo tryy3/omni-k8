@@ -87,6 +87,19 @@ spec:
           - group: ""
             kind: Secret
             name: app-cozytemp-tryy3-dev-tls
+    - name: https-home-assistant
+      protocol: HTTPS
+      port: 443
+      hostname: "home-assistant.tryy3.dev"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: home-assistant-tryy3-dev-tls
 
 ---
 apiVersion: gateway.networking.k8s.io/v1

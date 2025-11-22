@@ -9,12 +9,11 @@ allowVolumeExpansion: true
 reclaimPolicy: Delete
 volumeBindingMode: WaitForFirstConsumer
 parameters:
-  numberOfReplicas: "1"  # Single replica for better performance (non-production)
+  numberOfReplicas: "1"  # Single replica for better performance
   staleReplicaTimeout: "30"
   fromBackup: ""
   fsType: "ext4"
   dataLocality: "best-effort"  # Keep data on the same node as the pod
   unmapMarkSnapChainRemoved: "ignored"
-  disableRevisionCounter: "true"
-  dataEngine: "v1"
+  disableRevisionCounter: "false"  # Enable snapshots
 

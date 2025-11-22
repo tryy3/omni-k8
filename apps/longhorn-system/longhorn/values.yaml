@@ -2,9 +2,35 @@ longhorn:
   defaultSettings:
     defaultReplicaCount: "2"
     defaultDataPath: /var/lib/longhorn
+    
+    # Replica placement and balancing
+    replicaSoftAntiAffinity: "true"
+    replicaAutoBalance: "best-effort"
+    
+    # Node failure handling
+    nodeDownPodDeletionPolicy: "delete-both-statefulset-and-deployment-pod"
+    nodeDrainPolicy: "block-if-contains-last-replica"
+    
+    # Storage management
+    storageMinimalAvailablePercentage: "10"
+    storageOverProvisioningPercentage: "200"
+    
+    # Performance tuning
+    concurrentReplicaRebuildPerNodeLimit: "3"
+    
+    # Snapshot settings
+    snapshotDataIntegrity: "fast-check"
+    snapshotDataIntegrityImmediateCheckAfterSnapshotCreation: "false"
+    
+    # Auto-cleanup
+    removeSnapshotsDuringFilesystemTrim: "enabled"
+    orphanAutoDeletion: "true"
+    
+    # Volume creation
+    allowVolumeCreationWithDegradedAvailability: "true"
 
   persistence:
-    defaultClass: true
+    defaultClass: false  # Use custom longhorn-reliable instead
     defaultClassReplicaCount: 2
     reclaimPolicy: Delete
 
