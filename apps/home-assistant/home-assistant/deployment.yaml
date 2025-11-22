@@ -35,7 +35,7 @@ spec:
         - name: home-assistant-time-volume
           persistentVolumeClaim:
             claimName: home-assistant-time-pvc
--
+---
 apiVersion: v1
 kind: Service
 metadata:

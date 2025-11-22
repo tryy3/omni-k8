@@ -9,7 +9,7 @@ spec:
     requests:
       storage: 512Mi
   storageClassName: longhorn-reliable
--
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -23,7 +23,7 @@ spec:
   resources:
     requests:
       storage: 1Mi
--
+---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -39,4 +39,4 @@ spec:
   claimRef:
     name: home-assistant-time-pvc
     namespace: default
--
+---
