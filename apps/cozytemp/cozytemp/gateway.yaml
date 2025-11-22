@@ -86,9 +86,9 @@ spec:
           port: 8082
 
 ---
-# Route 3: app.cozytemp.tryy3.dev → cozytemp-server:8082
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
+# Route 4: postgres.cozytemp.tryy3.dev → cozytemp-pg-rw:5432
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TCPRoute
 metadata:
   name: cozytemp-postgres-route
   namespace: cozytemp
@@ -99,16 +99,10 @@ spec:
       name: custom-domain-gateway
       namespace: envoy
       sectionName: https-cozytemp-postgres
-  hostnames:
-    - "postgres.cozytemp.tryy3.dev"
   rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
+    - backendRefs:
         - group: ""
           kind: Service
-          name: cozytemp-pg
+          name: cozytemp-pg-rw
           namespace: cozytemp
           port: 5432
