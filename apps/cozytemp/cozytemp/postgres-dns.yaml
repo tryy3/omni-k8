@@ -3,9 +3,11 @@ kind: DNSEndpoint
 metadata:
   name: cozytemp-postgres-dns
   namespace: cozytemp
+  labels:
+    external-dns: enabled
 spec:
   endpoints:
-    - dnsName: postgres.cozytemp.tryy3.dev
+    - dnsName: pg.cozytemp.tryy3.dev
       recordType: CNAME
       targets:
         - gateway-envoy.fenrir-zebra.ts.net
