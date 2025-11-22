@@ -19,6 +19,7 @@ spec:
           image: registry.k8s.io/external-dns/external-dns:v0.19.0
           args:
             - --source=service
+            - --source=crd
             - --domain-filter=tryy3.dev # (optional) limit to only example.com domains; change to match the zone you create in DNSimple.
             - --provider=dnsimple
             - --registry=txt

@@ -90,7 +90,6 @@ spec:
     - name: https-cozytemp-postgres
       protocol: TCP
       port: 5432
-      hostname: "postgres.cozytemp.tryy3.dev"
       allowedRoutes:
         namespaces:
           from: All

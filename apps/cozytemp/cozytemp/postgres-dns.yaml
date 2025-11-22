@@ -1,0 +1,11 @@
+apiVersion: externaldns.k8s.io/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: cozytemp-postgres-dns
+  namespace: cozytemp
+spec:
+  endpoints:
+    - dnsName: postgres.cozytemp.tryy3.dev
+      recordType: CNAME
+      targets:
+        - gateway-envoy.fenrir-zebra.ts.net
