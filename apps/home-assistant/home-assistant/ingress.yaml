@@ -22,3 +22,19 @@ spec:
           name: home-assistant-svc
           namespace: home-assistant
           port: 8123
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: home-assistant-tryy3-dev
+  namespace: envoy
+spec:
+  secretName: home-assistant-tryy3-dev-tls
+  duration: 2160h # 90d
+  renewBefore: 720h # 30d
+  commonName: home-assistant.tryy3.dev
+  dnsNames:
+    - home-assistant.tryy3.dev
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
