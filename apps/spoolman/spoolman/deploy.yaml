@@ -31,9 +31,9 @@ spec:
             - name: TZ
               value: Europe/Stockholm
             - name: EXTERNAL_DB_URL
-              #   value: https://tryy3.github.io/SpoolmanDB/
-              # - name: EXTERNAL_DB_SYNC_INTERVAL
-              # value: "120"
+              value: https://donkie.github.io/SpoolmanDB/
+            - name: EXTERNAL_DB_SYNC_INTERVAL
+              value: "120"
             - name: SPOOLMAN_LOGGING_LEVEL
               value: DEBUG
           volumeMounts:
@@ -43,8 +43,8 @@ spec:
         - name: spoolman-mount
           persistentVolumeClaim:
             claimName: spoolman-data
-      imagePullSecrets:
-        - name: harbor.tryy3.dev-registry
+      #imagePullSecrets:
+      #  - name: harbor.tryy3.dev-registry
 ---
 apiVersion: v1
 kind: Service
