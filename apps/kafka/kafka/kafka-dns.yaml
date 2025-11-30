@@ -1,0 +1,14 @@
+apiVersion: externaldns.k8s.io/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: kafka-dns
+  namespace: kafka
+  labels:
+    external-dns: enabled
+spec:
+  endpoints:
+    - dnsName: kafka.tryy3.dev
+      recordType: CNAME
+      targets:
+        - gateway-envoy.fenrir-zebra.ts.net
+

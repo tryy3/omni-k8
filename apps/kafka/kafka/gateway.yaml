@@ -1,0 +1,53 @@
+# ===== HTTP ROUTES =====
+# Route traffic from Tailscale gateway (tryy3.dev domains) to Kafka UI
+# Note: Certificates and Gateway listeners are in apps/envoy/extra/
+
+# Route 1: kafka-ui.tryy3.dev → kafka-ui:8080
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: kafka-ui-route
+  namespace: kafka
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: custom-domain-gateway
+      namespace: envoy
+      sectionName: https-kafka-ui
+  hostnames:
+    - "kafka-ui.tryy3.dev"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: kafka-ui
+          namespace: kafka
+          port: 8080
+
+---
+# Route 2: kafka.tryy3.dev:9092 → kafka-kafka-bootstrap:9092
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TCPRoute
+metadata:
+  name: kafka-broker-route
+  namespace: kafka
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: custom-domain-gateway
+      namespace: envoy
+      sectionName: tcp-kafka
+  rules:
+    - backendRefs:
+        - group: ""
+          kind: Service
+          name: kafka-kafka-bootstrap
+          namespace: kafka
+          port: 9092
+
