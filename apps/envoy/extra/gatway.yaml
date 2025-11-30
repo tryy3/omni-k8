@@ -119,12 +119,19 @@ spec:
           - group: ""
             kind: Secret
             name: kafka-ui-tryy3-dev-tls
-    - name: tcp-kafka
-      protocol: TCP
-      port: 9092
+    - name: https-kafka
+      protocol: HTTPS
+      port: 443
+      hostname: "kafka.tryy3.dev"
       allowedRoutes:
         namespaces:
           from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: kafka-tryy3-dev-tls
 
 ---
 apiVersion: gateway.networking.k8s.io/v1

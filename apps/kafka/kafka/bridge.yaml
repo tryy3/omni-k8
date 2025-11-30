@@ -1,0 +1,18 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaBridge
+metadata:
+  name: kafka-bridge
+  namespace: kafka
+spec:
+  replicas: 1
+  bootstrapServers: kafka-kafka-bootstrap:9092
+  http:
+    port: 8080
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m
+    limits:
+      memory: 512Mi
+      cpu: 500m
+
