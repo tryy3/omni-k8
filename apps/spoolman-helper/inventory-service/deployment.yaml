@@ -1,33 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: lookup-service
+  name: inventory-service
   labels:
-    app: lookup-service
+    app: inventory-service
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: lookup-service
+      app: inventory-service
   template:
     metadata:
       labels:
-        app: lookup-service
+        app: inventory-service
     spec:
       nodeSelector:
         kubernetes.io/arch: amd64
       containers:
-        - name: lookup-service
-          image: ghcr.io/tryy3/spoolmanlookupservice:0.0.1
+        - name: inventory-service
+          image: ghcr.io/tryy3/spoolmaninventoryservice:0.0.3
           env:
             - name: KAFKA_BROKERS
               value: "kafka-kafka-bootstrap.kafka.svc.cluster.local:9092"
             - name: KAFKA_CONSUMER_TOPIC
-              value: "3dprinter-filament-transfer-initiated"
-            - name: KAFKA_PRODUCER_TOPIC
               value: "3dprinter-filament-transfer-ready"
+            - name: KAFKA_PRODUCER_TOPIC
+              value: "3dprinter-filament-transfer-completed"
             - name: KAFKA_CONSUMER_GROUP
-              value: "spoolman-lookup-service"
+              value: "spoolman-inventory-service"
             - name: SPOOLMAN_API_URL
               value: "http://spoolman-svc.spoolman.svc.cluster.local/api/v1"
           
@@ -38,3 +38,4 @@ spec:
             limits:
               cpu: 200m
               memory: 256Mi
+
