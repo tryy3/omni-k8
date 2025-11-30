@@ -21,7 +21,7 @@ spec:
           image: ghcr.io/tryy3/spoolmanlookupservice:0.0.1
           env:
             - name: KAFKA_BROKERS
-              value: "kafka-bootstrap.kafka.svc.cluster.local:9092"
+              value: "kafka-bootstrap.kafka.svc:9092"
             - name: KAFKA_CONSUMER_TOPIC
               value: "3dprinter-filament-transfer-initiated"
             - name: KAFKA_PRODUCER_TOPIC
@@ -29,7 +29,7 @@ spec:
             - name: KAFKA_CONSUMER_GROUP
               value: "spoolman-lookup-service"
             - name: SPOOLMAN_API_URL
-              value: "https://spoolman.tryy3.dev"
+              value: "http://spoolman-svc.spoolman.svc/api/v1"
           
           resources:
             requests:
