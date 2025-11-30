@@ -6,6 +6,13 @@ kafka-ui:
       clusters:
         - name: kafka
           bootstrapServers: kafka-kafka-bootstrap.kafka.svc.cluster.local:9092
+    
+    logging:
+      level:
+        root: DEBUG
+        io.kafbat.ui: DEBUG
+        reactor.netty.http.server.AccessLog: DEBUG
+        org.hibernate.validator: DEBUG
 
   service:
     type: ClusterIP
