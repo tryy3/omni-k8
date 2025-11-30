@@ -25,7 +25,7 @@ spec:
       backendRefs:
         - group: ""
           kind: Service
-          name: kafka-ui
+          name: kafka-kafka-ui
           namespace: kafka
           port: 8080
 
