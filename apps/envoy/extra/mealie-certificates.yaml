@@ -1,0 +1,20 @@
+# TLS Certificate for Mealie domain
+# This must be in the envoy namespace to be referenced by the Gateway
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mealie-tryy3-dev
+  namespace: envoy
+spec:
+  secretName: mealie-tryy3-dev-tls
+  duration: 2160h # 90d
+  renewBefore: 720h # 30d
+  commonName: mealie.tryy3.dev
+  dnsNames:
+    - mealie.tryy3.dev
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+

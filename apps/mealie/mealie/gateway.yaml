@@ -1,0 +1,30 @@
+# HTTP Route for Mealie
+# Route traffic from custom-domain-gateway (mealie.tryy3.dev) to mealie service
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: mealie-route
+  namespace: mealie
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: custom-domain-gateway
+      namespace: envoy
+      sectionName: https-mealie
+  hostnames:
+    - "mealie.tryy3.dev"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: mealie
+          namespace: mealie
+          port: 9000
+
