@@ -1,0 +1,55 @@
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
+metadata:
+  name: cozytemp-temperature-raw
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: kafka
+spec:
+  partitions: 3
+  replicas: 3
+  config:
+    retention.ms: 1800000 # 30 minutes
+    compression.type: lz4
+    cleanup.policy: delete
+
+    # Durability (<= broker count)
+    min.insync.replicas: 2
+---
+
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
+metadata:
+  name: cozytemp-temperature-calibration-realtime
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: kafka
+spec:
+  partitions: 3
+  replicas: 3
+  config:
+    retention.ms: 1800000 # 30 minutes
+    compression.type: lz4
+    cleanup.policy: delete
+
+    # Durability (<= broker count)
+    min.insync.replicas: 2
+---
+
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
+metadata:
+  name: cozytemp-temperature-calibration-backfill
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: kafka
+spec:
+  partitions: 3
+  replicas: 3
+  config:
+    retention.ms: 1800000 # 30 minutes
+    compression.type: lz4
+    cleanup.policy: delete
+
+    # Durability (<= broker count)
+    min.insync.replicas: 2
