@@ -63,6 +63,12 @@ spec:
                 secretKeyRef:
                   name: mealie-pg-app
                   key: dbname
+
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mealie-openai-secret
+                  key: openai-secret
           
           volumeMounts:
             - name: mealie-data
