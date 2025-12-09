@@ -1,0 +1,54 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: manual-calibration
+  namespace: cozytemp          # set your namespace
+spec:
+  entrypoint: run
+  serviceAccountName: default  # or a restricted SA for jobs
+  podGC:
+    strategy: OnPodCompletion   # clean up pods when done
+  ttlStrategy:
+    secondsAfterSuccess: 86400  # 24h retention of workflow object
+    secondsAfterFailure: 604800 # keep failed for 7d
+  templates:
+    - name: run
+      inputs:
+        parameters:
+          - name: image
+            default: ghcr.io/tryy3/cozytemp-manual-calibration-job:0.0.2
+          - name: kafka_brokers
+            default: "kafka-kafka-bootstrap.kafka.svc.cluster.local:9092"
+          - name: producer_topic
+            default: "cozytemp-temperature-calibration-backfill"
+          - name: MESSAGE_COUNT
+            default: 1000
+          - name: POSTGRES_URL
+            valueFrom:
+              secretKeyRef:
+                name: cozytemp-pg-app
+                key: fqdn-uri
+      retryStrategy:
+        limit: 1 
+      container:
+        name: calibration
+        image: "{{inputs.parameters.image}}"
+        env:
+          - name: KAFKA_BROKERS
+            value: "{{inputs.parameters.kafka_brokers}}"
+          - name: KAFKA_CONSUMER_TOPIC
+            value: "{{inputs.parameters.consumer_topic}}"
+          - name: MESSAGE_COUNT
+            value: "{{inputs.parameters.message_count}}"
+          - name: POSTGRES_URL
+            valueFrom:
+              secretKeyRef:
+                name: cozytemp-pg-app
+                key: fqdn-uri
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
