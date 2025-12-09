@@ -53,3 +53,22 @@ spec:
 
     # Durability (<= broker count)
     min.insync.replicas: 2
+---
+
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
+metadata:
+  name: cozytemp-temperature-calibration-completed
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: kafka
+spec:
+  partitions: 3
+  replicas: 3
+  config:
+    retention.ms: 600000 # 10 minutes
+    compression.type: lz4
+    cleanup.policy: delete
+
+    # Durability (<= broker count)
+    min.insync.replicas: 2
