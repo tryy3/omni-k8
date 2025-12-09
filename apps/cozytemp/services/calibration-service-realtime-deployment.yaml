@@ -6,7 +6,7 @@ metadata:
   labels:
     app: calibration-service-realtime
 spec:
-  replicas: 2
+  replicas: 9 
   selector:
     matchLabels:
       app: calibration-service-realtime

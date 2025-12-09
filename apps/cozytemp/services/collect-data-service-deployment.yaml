@@ -6,7 +6,7 @@ metadata:
   labels:
     app: collect-data-service
 spec:
-  replicas: 3
+  replicas: 9
   selector:
     matchLabels:
       app: collect-data-service
