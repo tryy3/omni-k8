@@ -1,54 +1,50 @@
-apiVersion: argoproj.io/v1alpha1
-kind: WorkflowTemplate
+apiVersion: batch/v1
+kind: CronJob
 metadata:
-  name: manual-calibration
-  namespace: cozytemp          # set your namespace
+  name: manual-calibration-job
+  namespace: cozytemp
+  labels:
+    app: manual-calibration-job
 spec:
-  entrypoint: run
-  serviceAccountName: default  # or a restricted SA for jobs
-  podGC:
-    strategy: OnPodCompletion   # clean up pods when done
-  ttlStrategy:
-    secondsAfterSuccess: 86400  # 24h retention of workflow object
-    secondsAfterFailure: 604800 # keep failed for 7d
-  templates:
-    - name: run
-      inputs:
-        parameters:
-          - name: image
-            default: ghcr.io/tryy3/cozytemp-manual-calibration-job:0.0.2
-          - name: kafka_brokers
-            default: "kafka-kafka-bootstrap.kafka.svc.cluster.local:9092"
-          - name: producer_topic
-            default: "cozytemp-temperature-calibration-backfill"
-          - name: MESSAGE_COUNT
-            default: 1000
-          - name: POSTGRES_URL
-            valueFrom:
-              secretKeyRef:
-                name: cozytemp-pg-app
-                key: fqdn-uri
-      retryStrategy:
-        limit: 1 
-      container:
-        name: calibration
-        image: "{{inputs.parameters.image}}"
-        env:
-          - name: KAFKA_BROKERS
-            value: "{{inputs.parameters.kafka_brokers}}"
-          - name: KAFKA_CONSUMER_TOPIC
-            value: "{{inputs.parameters.consumer_topic}}"
-          - name: MESSAGE_COUNT
-            value: "{{inputs.parameters.message_count}}"
-          - name: POSTGRES_URL
-            valueFrom:
-              secretKeyRef:
-                name: cozytemp-pg-app
-                key: fqdn-uri
-        resources:
-          requests:
-            cpu: 100m
-            memory: 256Mi
-          limits:
-            cpu: 500m
-            memory: 512Mi
+  # Never actually schedules (Feb 31st); acts as a template
+  schedule: "0 0 31 2 *"
+  suspend: true
+
+  # Keep some history for visibility in ArgoCD
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 86400    # auto-clean finished jobs after 24h
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            app: manual-calibration-job
+        spec:
+          restartPolicy: Never
+          nodeSelector:
+            kubernetes.io/arch: amd64
+          containers:
+            - name: calibration
+              image: ghcr.io/tryy3/cozytemp-manual-calibration-job:0.0.2
+              env:
+                - name: KAFKA_BROKERS
+                  value: "kafka-kafka-bootstrap.kafka.svc.cluster.local:9092"
+                - name: KAFKA_PRODUCER_TOPIC
+                  value: "cozytemp-temperature-calibration-backfill"
+                - name: MESSAGE_COUNT
+                  value: "1000"
+                - name: POSTGRES_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: cozytemp-pg-app
+                      key: fqdn-uri
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
