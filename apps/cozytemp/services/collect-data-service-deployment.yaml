@@ -1,0 +1,45 @@
+
+apiVersion: apps/v2
+kind: Deployment
+metadata:
+  name: collect-data-service
+  labels:
+    app: collect-data-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: collect-data-service
+  template:
+    metadata:
+      labels:
+        app: collect-data-service
+    spec:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      containers:
+        - name: collect-data-service
+          image: ghcr.io/tryy3/cozytemp-collect-data-service:0.0.1
+          env:
+            - name: KAFKA_BROKERS
+              value: "kafka-kafka-bootstrap.kafka.svc.cluster.local:9092"
+            - name: KAFKA_CONSUMER_TOPIC
+              value: "cozytemp-temperature-raw"
+            - name: KAFKA_PRODUCER_TOPIC
+              value: "cozytemp-temperature-calibration-realtime"
+            - name: KAFKA_CONSUMER_GROUP
+              value: "cozytemp-collect-data-service"
+            - name: POSTGRES_URL
+              valueFrom:
+                secretKeyRef:
+                  name: cozytemp-pg-app
+                  key: fqdn-uri
+          
+          resources:
+            requests:
+              cpu: 20m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+
