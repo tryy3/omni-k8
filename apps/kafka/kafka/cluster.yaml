@@ -5,6 +5,8 @@ metadata:
   namespace: kafka
   labels:
     strimzi.io/cluster: kafka
+  nodeSelector:
+    kubernetes.io/arch: amd64
 spec:
   replicas: 3
   roles:
