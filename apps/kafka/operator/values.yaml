@@ -15,3 +15,6 @@ strimzi-kafka-operator:
       memory: 512Mi
       cpu: 500m
 
+
+  nodeSelector:
+    kubernetes.io/arch: amd64
