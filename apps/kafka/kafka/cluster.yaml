@@ -5,8 +5,6 @@ metadata:
   namespace: kafka
   labels:
     strimzi.io/cluster: kafka
-  nodeSelector:
-    kubernetes.io/arch: amd64
 spec:
   replicas: 3
   roles:
@@ -20,6 +18,17 @@ spec:
         size: 10Gi
         class: longhorn-fast
         deleteClaim: false
+  template:
+    pod:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerm:
+              matchExpressions:
+                - key: kubernetes.io/arch
+                  operator: In
+                  values:
+                    - amd64
 ---
 apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
