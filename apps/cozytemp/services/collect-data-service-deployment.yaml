@@ -19,7 +19,7 @@ spec:
         kubernetes.io/arch: amd64
       containers:
         - name: collect-data-service
-          image: ghcr.io/tryy3/cozytemp-collect-data-service:0.0.4
+          image: ghcr.io/tryy3/cozytemp-collect-data-service:0.0.5
           env:
             - name: KAFKA_BROKERS
               value: "kafka-kafka-bootstrap.kafka.svc.cluster.local:9092"
