@@ -5,7 +5,7 @@ metadata:
   labels:
     app: lookup-service
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: lookup-service
