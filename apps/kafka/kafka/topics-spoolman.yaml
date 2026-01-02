@@ -16,7 +16,6 @@ spec:
     # Durability (<= broker count)
     min.insync.replicas: 2
 ---
-
 apiVersion: kafka.strimzi.io/v1
 kind: KafkaTopic
 metadata:
@@ -35,7 +34,6 @@ spec:
     # Durability (<= broker count)
     min.insync.replicas: 2
 ---
-
 apiVersion: kafka.strimzi.io/v1
 kind: KafkaTopic
 metadata:
@@ -53,3 +51,39 @@ spec:
 
     # Durability (<= broker count)
     min.insync.replicas: 2
+---
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
+metadata:
+  name: 3dprinter-rfid-read-raw
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: kafka
+spec:
+  partitions: 1
+  replicas: 1
+  config:
+    retention.ms: 300000 # 5 mins
+    compression.type: lz4
+    cleanup.policy: delete
+
+    # Durability (<= broker count)
+    min.insync.replicas: 1
+---
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
+metadata:
+  name: 3dprinter-rfid-write-raw
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: kafka
+spec:
+  partitions: 1
+  replicas: 1
+  config:
+    retention.ms: 300000 # 5 mins
+    compression.type: lz4
+    cleanup.policy: delete
+
+    # Durability (<= broker count)
+    min.insync.replicas: 1
