@@ -1,0 +1,55 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: renovate-bot
+  namespace: renovate
+  labels:
+    app: renovate-bot
+spec:
+  schedule: '@hourly'
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - image: renovate/renovate:41.118.1
+              name: renovate-bot
+              env: # For illustration purposes, please use secrets.
+                - name: RENOVATE_PLATFORM
+                  value: 'gitea'
+                - name: RENOVATE_AUTODISCOVER
+                  value: 'true'
+                - name: RENOVATE_BASE_DIR
+                  value: '/tmp/renovate/'
+                - name: RENOVATE_CONFIG_FILE
+                  value: '/opt/renovate/config.json5'
+                - name: LOG_LEVEL
+                  value: debug
+                - name: RENOVATE_GITHUB_COM_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: renovate-secret
+                      key: github-token
+                - name: RENOVATE_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: renovate-secret
+                      key: gitea-token
+                - name: RENOVATE_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: renovate-secret
+                      key: gitea-url
+              volumeMounts:
+                - name: config-volume
+                  mountPath: /opt/renovate/
+                - name: work-volume
+                  mountPath: /tmp/renovate/
+          restartPolicy: Never
+          volumes:
+            - name: config-volume
+              configMap:
+                name: renovate-config
+            - name: work-volume
+              emptyDir: {}
