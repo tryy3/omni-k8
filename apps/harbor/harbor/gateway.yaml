@@ -26,5 +26,5 @@ spec:
           kind: Service
           name: harbor-helm-core
           namespace: harbor
-          port: 8080
+          port: 80
 
