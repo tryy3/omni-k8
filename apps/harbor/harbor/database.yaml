@@ -1,0 +1,25 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: harbor-pg
+  namespace: harbor
+spec:
+  instances: 2
+  imageName: ghcr.io/cloudnative-pg/postgresql:18
+
+  bootstrap:
+    initdb:
+      database: harbor
+      owner: harbor
+
+  storage:
+    storageClass: longhorn-fast
+    size: 10Gi
+  
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
