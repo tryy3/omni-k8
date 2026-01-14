@@ -24,7 +24,7 @@ spec:
       backendRefs:
         - group: ""
           kind: Service
-          name: harbor-core
+          name: harbor-helm-core
           namespace: harbor
-          port: 80
+          port: 8080
 
