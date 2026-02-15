@@ -371,7 +371,7 @@ harbor:
     type: RollingUpdate
 
   # debug, info, warning, error or fatal
-  logLevel: info
+  logLevel: debug
 
   # The name of the secret which contains key named "ca.crt". Setting this enables the
   # download link on portal to download the CA certificate when the certificate isn't
@@ -432,14 +432,12 @@ harbor:
       # Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval: ""
       # Metric relabel configs to apply to samples before ingestion.
-      metricRelabelings:
-        []
+      metricRelabelings: []
         # - action: keep
       #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
       #   sourceLabels: [__name__]
       # Relabel configs to apply to samples before ingestion.
-      relabelings:
-        []
+      relabelings: []
         # - sourceLabels: [__meta_kubernetes_pod_node_name]
         #   separator: ;
         #   regex: ^(.*)$
