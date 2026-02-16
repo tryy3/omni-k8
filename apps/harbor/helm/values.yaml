@@ -152,7 +152,7 @@ harbor:
         storageClass: longhorn-fast
         subPath: ""
         accessMode: ReadWriteOnce
-        size: 5Gi
+        size: 15Gi
         annotations: {}
       jobservice:
         jobLog:
@@ -160,7 +160,7 @@ harbor:
           storageClass: longhorn-fast
           subPath: ""
           accessMode: ReadWriteOnce
-          size: 1Gi
+          size: 5Gi
           annotations: {}
       # If external database is used, the following settings for database will
       # be ignored
