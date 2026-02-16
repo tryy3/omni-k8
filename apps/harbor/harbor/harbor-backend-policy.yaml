@@ -1,0 +1,22 @@
+# BackendTrafficPolicy for Harbor
+# Increases timeout to allow Harbor proxy cache to fetch from Docker Hub
+# Default Envoy timeout is 15s, but Docker Hub fetches can take 60s+
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: harbor-timeout-policy
+  namespace: harbor
+spec:
+  # Target the Harbor HTTPRoute
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: harbor-helm-route
+  timeout:
+    # Backend connection timeout
+    tcp:
+      connectTimeout: 10s
+    # HTTP request timeout - increased to 120s for Docker Hub proxy fetches
+    http:
+      requestTimeout: 300s
