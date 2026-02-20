@@ -1,0 +1,29 @@
+# HTTPRoute for Kubeshark frontend
+# Routes traffic from the centralized envoy gateway to Kubeshark
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: kubeshark-route
+  namespace: kubeshark
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: custom-domain-gateway
+      namespace: envoy
+      sectionName: https-kubeshark
+  hostnames:
+    - "kubeshark.tryy3.dev"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: kubeshark-front
+          namespace: kubeshark
+          port: 80

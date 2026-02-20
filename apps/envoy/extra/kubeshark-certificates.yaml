@@ -1,0 +1,19 @@
+# TLS Certificate for Kubeshark domain
+# This must be in the envoy namespace to be referenced by the Gateway
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kubeshark-tryy3-dev
+  namespace: envoy
+spec:
+  secretName: kubeshark-tryy3-dev-tls
+  duration: 2160h # 90d
+  renewBefore: 720h # 30d
+  commonName: kubeshark.tryy3.dev
+  dnsNames:
+    - kubeshark.tryy3.dev
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer

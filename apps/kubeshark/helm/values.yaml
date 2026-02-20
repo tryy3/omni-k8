@@ -1,0 +1,114 @@
+# Kubeshark Helm Values
+# API Traffic Analyzer for Kubernetes
+#
+# Documentation: https://docs.kubeshark.co/
+
+kubeshark:
+  tap:
+    # Docker image settings
+    docker:
+      registry: docker.io/kubeshark
+      imagePullPolicy: Always
+
+    # Namespace targeting
+    # Leave empty to capture from all namespaces
+    namespaces: []
+
+    # Exclude specific namespaces from capture
+    excludedNamespaces:
+      - kube-system
+
+    # Traffic capture settings
+    capture:
+      dissection:
+        enabled: true
+        stopAfter: 5m
+      raw:
+        enabled: true
+        storageSize: 1Gi
+      dbMaxSize: 500Mi
+
+    # Storage configuration
+    storageLimit: 10Gi
+    storageClass: ""  # Use default storage class
+    persistentStorage: false
+
+    # Resource limits
+    resources:
+      hub:
+        limits:
+          cpu: "0"
+          memory: 5Gi
+        requests:
+          cpu: 50m
+          memory: 50Mi
+      sniffer:
+        limits:
+          cpu: "0"
+          memory: 5Gi
+        requests:
+          cpu: 50m
+          memory: 50Mi
+      tracer:
+        limits:
+          cpu: "0"
+          memory: 5Gi
+        requests:
+          cpu: 50m
+          memory: 50Mi
+
+    # Protocol dissectors to enable
+    enabledDissectors:
+      - amqp
+      - dns
+      - http
+      - icmp
+      - kafka
+      - redis
+      - ws
+      - ldap
+      - radius
+      - diameter
+      - udp-flow
+      - tcp-flow
+      - udp-conn
+      - tcp-conn
+
+    # Service mesh and TLS settings
+    serviceMesh: true
+    tls: true
+    disableTlsLog: true
+
+    # Security context (required for packet capture)
+    securityContext:
+      privileged: true
+
+    # Network settings
+    hostNetwork: true
+    ipv6: true
+
+    # Worker tolerations - run on all nodes
+    tolerations:
+      workers:
+        - operator: Exists
+          effect: NoExecute
+
+    # Ingress settings (disabled - using gateway instead)
+    ingress:
+      enabled: false
+
+    # Debug and telemetry
+    debug: false
+    telemetry:
+      enabled: true
+
+  # Logging configuration
+  logs:
+    file: ""
+
+  # Log level: debug, info, warning, error
+  logLevel: warning
+
+  # Scripting support
+  scripting:
+    enabled: false
