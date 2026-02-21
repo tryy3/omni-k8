@@ -4,5 +4,5 @@ version: 0.1.0
 description: MetalLB LoadBalancer for local network access
 dependencies:
   - name: metallb
-    version: 0.15.2
+    version: 0.15.3
     repository: https://metallb.github.io/metallb
