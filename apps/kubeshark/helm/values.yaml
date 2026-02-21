@@ -91,7 +91,6 @@ kubeshark:
 
     # Network settings
     hostNetwork: true
-    ipv6: true
 
     # Worker tolerations - run on all nodes
     tolerations:
