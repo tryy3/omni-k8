@@ -21,7 +21,7 @@ cert-manager-webhook-dnsimple:
       enabled: true
   image:
     repository: ghcr.io/puzzle/cert-manager-webhook-dnsimple
-    tag: v0.1.9
+    tag: v0.1.10
     pullPolicy: IfNotPresent
     # pullSecret: "gcr"
   nameOverride: "dnsimple"
