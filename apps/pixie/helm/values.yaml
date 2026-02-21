@@ -1,4 +1,4 @@
-pixie:
+pixie-operator-chart:
   ## OLM configuration
   # OLM is used for deploying and ensuring the operator is up-to-date.
   # deployOLM indicates whether OLM should be deployed. This should only be
