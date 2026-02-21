@@ -101,8 +101,8 @@ kubeshark:
     ingress:
       enabled: false
 
-    # Debug and telemetry - enabled for troubleshooting
-    debug: true
+    # Debug and telemetry
+    debug: false
     telemetry:
       enabled: true
 
@@ -111,7 +111,7 @@ kubeshark:
     file: ""
 
   # Log level: debug, info, warning, error
-  logLevel: debug
+  logLevel: warning
 
   # Scripting support
   scripting:
