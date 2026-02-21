@@ -3,6 +3,6 @@ name: pixie
 version: 0.1.0
 description: API Traffic Analyzer for Kubernetes
 dependencies:
-  - name: pixie-operator-chart
+  - name: pixie-operator/pixie-operator-chart
     version: 0.1.7
-    repository: https://artifacts.px.dev/helm_charts/operator/pixie-operator
+    repository: https://artifacts.px.dev/helm_charts/operator
