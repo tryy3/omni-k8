@@ -10,6 +10,8 @@ kubeshark:
       registry: docker.io/kubeshark
       imagePullPolicy: Always
 
+    ipv6: false
+
     # Namespace targeting
     # Leave empty to capture from all namespaces
     namespaces: []
