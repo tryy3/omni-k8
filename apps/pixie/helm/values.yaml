@@ -39,7 +39,7 @@ pixie-operator-chart:
   # deployKey: ""
   # The deploy key may be read from a custom secret in the Pixie namespace. This secret should be formatted where the
   # key of the deploy key is "deploy-key".
-  customDeployKeySecret: pixie-key-secret
+  customDeployKeySecret: "pixie-key-secret"
   # Whether auto-update should be disabled.
   disableAutoUpdate: false
   # Whether the metadata service should use etcd for in-memory storage. Recommended
