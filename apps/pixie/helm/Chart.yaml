@@ -1,0 +1,8 @@
+apiVersion: v2
+name: pixie
+version: 0.1.0
+description: API Traffic Analyzer for Kubernetes
+dependencies:
+  - name: pixie-operator
+    version: 0.1.7
+    repository: hhttps://artifacts.px.dev/helm_charts/operato
