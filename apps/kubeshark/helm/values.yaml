@@ -30,7 +30,7 @@ kubeshark:
 
     # Storage configuration
     storageLimit: 10Gi
-    storageClass: ""  # Use default storage class
+    storageClass: "" # Use default storage class
     persistentStorage: false
 
     # Resource limits
@@ -79,6 +79,10 @@ kubeshark:
     tls: true
     disableTlsLog: true
 
+    # Packet capture method: af_packet, af_xdp, pf_ring, or best
+    # Try af_packet if "best" doesn't work on your nodes
+    packetCapture: af_packet
+
     # Security context (required for packet capture)
     securityContext:
       privileged: true
@@ -97,8 +101,8 @@ kubeshark:
     ingress:
       enabled: false
 
-    # Debug and telemetry
-    debug: false
+    # Debug and telemetry - enabled for troubleshooting
+    debug: true
     telemetry:
       enabled: true
 
@@ -107,7 +111,7 @@ kubeshark:
     file: ""
 
   # Log level: debug, info, warning, error
-  logLevel: warning
+  logLevel: debug
 
   # Scripting support
   scripting:
