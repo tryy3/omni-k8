@@ -32,7 +32,7 @@ name: "pixie"
 # clusterName: ""
 # The version of the Vizier instance deployed to the cluster. If empty,
 # the operator will automatically deploy the latest version.
-# version: ""
+version: "0.14.5"
 # The deploy key is used to link the deployed Vizier to a specific user/project.
 # This is required if not specifying a customDeployKeySecret, and can be generated through the UI or CLI.
 # deployKey: ""
