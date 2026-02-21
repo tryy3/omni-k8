@@ -31382,6 +31382,17 @@ cluster:
         type: Opaque
         ---
         apiVersion: v1
+        data:
+          auth: dGVzdA==
+          redis-password: dGVzdA==
+          redis-username: dGVzdA==
+        kind: Secret
+        metadata:
+          name: argocd-redis
+          namespace: argocd
+        type: Opaque
+        ---
+        apiVersion: v1
         kind: Secret
         metadata:
           labels:
