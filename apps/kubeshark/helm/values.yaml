@@ -14,7 +14,8 @@ kubeshark:
 
     # Namespace targeting
     # Leave empty to capture from all namespaces
-    namespaces: []
+    namespaces:
+      - harbor
 
     # Exclude specific namespaces from capture
     excludedNamespaces:
@@ -27,8 +28,8 @@ kubeshark:
         stopAfter: 5m
       raw:
         enabled: true
-        storageSize: 1Gi
-      dbMaxSize: 500Mi
+        storageSize: 4Gi
+      dbMaxSize: 3Gi
 
     # Storage configuration
     storageLimit: 10Gi
